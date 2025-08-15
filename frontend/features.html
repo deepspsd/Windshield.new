@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Features - WebShield</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <style>
+        :root {
+            /* Color System */
+            --primary: 220 95% 55%;
+            --primary-glow: 220 90% 65%;
+            --primary-variant: 230 85% 45%;
+            --secondary: 240 5% 15%;
+            --accent: 45 100% 55%;
+            --success: 142 76% 36%;
+            --destructive: 0 72% 51%;
+            --warning: 38 92% 50%;
+            
+            /* Background Colors */
+            --background: 224 71% 4%;
+            --surface: 224 71% 6%;
+            --card: 224 71% 8%;
+            --muted: 215 27% 17%;
+            --border: 215 27% 20%;
+            
+            /* Text Colors */
+            --foreground: 213 31% 91%;
+            --muted-foreground: 215 20% 65%;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+            --gradient-cyber: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-variant)) 50%, hsl(var(--accent)) 100%);
+            --hero-gradient: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--surface)) 50%, hsl(var(--card)) 100%);
+            
+            /* Effects */
+            --glow: 0 0 30px hsl(var(--primary) / 0.3);
+            --glow-strong: 0 0 50px hsl(var(--primary) / 0.5);
+            --shadow-elegant: 0 10px 40px -10px hsl(var(--primary) / 0.2);
+            --border-glow: 0 0 20px hsl(var(--primary) / 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: hsl(var(--surface) / 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid hsl(var(--border));
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            padding: 1rem 0;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: hsl(var(--primary));
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, hsl(210 100% 60%), hsl(160 84% 45%));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, hsl(210 100% 60%), hsl(160 84% 45%));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav a {
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover {
+            color: hsl(var(--primary));
+        }
+
+        .nav a.active {
+            color: hsl(var(--primary));
+        }
+
+        /* Header Actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid hsl(var(--ring));
+            outline-offset: 2px;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: hsl(var(--foreground));
+            border: 2px solid hsl(var(--border));
+        }
+
+        .btn-outline:hover {
+            background: hsl(var(--muted) / 0.5);
+            border-color: hsl(var(--primary));
+            color: hsl(var(--primary));
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 14px 0 hsl(var(--primary) / 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--primary) / 0.4);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: hsl(var(--foreground));
+            border: 1px solid transparent;
+        }
+
+        .btn-ghost:hover {
+            background: hsl(var(--muted) / 0.5);
+            border-color: hsl(var(--border));
+        }
+
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: white;
+            border: 1px solid hsl(var(--border));
+            border-radius: 0.5rem;
+            padding: 1rem;
+            display: none;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.2s;
+        }
+
+        .profile-menu-item:hover {
+            background-color: hsl(var(--surface));
+        }
+
+        .profile-menu-divider {
+            border: none;
+            height: 1px;
+            background-color: hsl(var(--border));
+            margin: 1rem 0;
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 4rem 0;
+            text-align: center;
+            background: var(--hero-gradient);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: var(--gradient-cyber);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.25rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+
+        /* Features Grid */
+        .features-section {
+            padding: 1rem 0;
+            margin-bottom: 0.2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            color: hsl(var(--foreground));
+        }
+
+        .section-header p {
+            font-size: 1.125rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .feature-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-elegant);
+            border-color: hsl(var(--primary));
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--gradient-primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-icon svg {
+            width: 28px;
+            height: 28px;
+            color: white;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: hsl(var(--foreground));
+        }
+
+        .feature-card p {
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1rem;
+        }
+
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .feature-list li {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.1rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .feature-list li::before {
+            content: '✓';
+            color: hsl(var(--success));
+            font-weight: bold;
+        }
+        /* Footer */
+.footer {
+    background: hsl(var(--surface) / 0.8);
+    padding: 1rem 0;
+    text-align: center;
+    font-size: 1rem;
+    color: hsl(var(--muted-foreground));
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🛡️</div>
+                    <span class="logo-text">WebShield</span>
+                </div>
+                
+                <nav class="nav" id="mobile-nav">
+                    <a href="index.html">Home</a>
+                    <a href="features.html" class="active">Features</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="how-to-install.html">Extension</a>
+                    <a href="about.html">About</a>
+                </nav>
+                
+                <button class="mobile-menu-btn" id="mobile-menu-btn" style="display: none;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                
+                <div class="header-actions" id="header-actions">
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Advanced Protection Features</h2>
+                <p>Go beyond basic security with our advanced protection mechanisms</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <h3>Typosquatting Detection</h3>
+                    <p>Identify malicious domains that mimic legitimate websites with slight variations.</p>
+                    <ul class="feature-list">
+                        <li>Character similarity analysis</li>
+                        <li>Brand impersonation detection</li>
+                        <li>Visual similarity scoring</li>
+                        <li>Domain confusion prevention</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 12l2 2 4-4"/>
+                            <path d="M21 12c-1 0-2-1-2-2s1-2 2-2 2 1 2 2-1 2-2 2z"/>
+                            <path d="M3 12c1 0 2-1 2-2s-1-2-2-2-2 1-2 2 1 2 2 2z"/>
+                            <path d="M12 3c0 1-1 2-2 2s-2-1-2-2 1-2 2-2 2 1 2 2z"/>
+                            <path d="M12 21c0-1 1-2 2-2s2 1 2 2-1 2-2 2-2-1-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3>Behavioral Analysis</h3>
+                    <p>Analyze website behavior patterns to detect sophisticated threats and anomalies.</p>
+                    <ul class="feature-list">
+                        <li>User interaction tracking</li>
+                        <li>Anomaly detection</li>
+                        <li>Pattern recognition</li>
+                        <li>Predictive threat modeling</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3>Real-time Monitoring</h3>
+                    <p>Continuous monitoring and alerting for security threats and suspicious activities.</p>
+                    <ul class="feature-list">
+                        <li>24/7 threat monitoring</li>
+                        <li>Instant alert system</li>
+                        <li>Automated responses</li>
+                        <li>Security dashboard</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Core Features -->
+    <section class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Core Security Features</h2>
+                <p>Our advanced detection system combines multiple layers of security to keep you safe online</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M3 7v10a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2z"/>
+                            <line x1="8" y1="21" x2="16" y2="21"/>
+                            <line x1="12" y1="17" x2="12" y2="21"/>
+                        </svg>
+                    </div>
+                    <h3>Real-time URL Scanning</h3>
+                    <p>Instant analysis of URLs for malicious content, phishing attempts, and security threats.</p>
+                    <ul class="feature-list">
+                        <li>Live threat detection</li>
+                        <li>Phishing site identification</li>
+                        <li>Malware URL blocking</li>
+                        <li>Instant security reports</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                        </svg>
+                    </div>
+                    <h3>SSL Certificate Analysis</h3>
+                    <p>Comprehensive SSL/TLS certificate validation and security assessment.</p>
+                    <ul class="feature-list">
+                        <li>Certificate validity checking</li>
+                        <li>Encryption strength analysis</li>
+                        <li>Expiration date monitoring</li>
+                        <li>Security protocol verification</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M9 12l2 2 4-4"/>
+                            <path d="M21 12c-1 0-2-1-2-2s1-2 2-2 2 1 2 2-1 2-2 2z"/>
+                            <path d="M3 12c1 0 2-1 2-2s-1-2-2-2-2 1-2 2 1 2 2 2z"/>
+                            <path d="M12 3c0 1-1 2-2 2s-2-1-2-2 1-2 2-2 2 1 2 2z"/>
+                            <path d="M12 21c0-1 1-2 2-2s2 1 2 2-1 2-2 2-2-1-2-2z"/>
+                        </svg>
+                    </div>
+                    <h3>AI-Powered Content Analysis</h3>
+                    <p>Advanced machine learning algorithms analyze website content for suspicious patterns.</p>
+                    <ul class="feature-list">
+                        <li>Natural language processing</li>
+                        <li>Pattern recognition</li>
+                        <li>Behavioral analysis</li>
+                        <li>Threat intelligence</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+                        </svg>
+                    </div>
+                    <h3>VirusTotal Integration</h3>
+                    <p>Leverage the world's largest threat intelligence platform for comprehensive security analysis.</p>
+                    <ul class="feature-list">
+                        <li>Multi-engine scanning</li>
+                        <li>Global threat database</li>
+                        <li>Real-time updates</li>
+                        <li>Community insights</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+                            <path d="M2 17l10 5 10-5"/>
+                            <path d="M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <h3>Domain Reputation Analysis</h3>
+                    <p>Evaluate domain trustworthiness based on historical data and security metrics.</p>
+                    <ul class="feature-list">
+                        <li>Domain age verification</li>
+                        <li>Reputation scoring</li>
+                        <li>Historical threat data</li>
+                        <li>Trust indicators</li>
+                    </ul>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                    </div>
+                    <h3>Threat Level Assessment</h3>
+                    <p>Comprehensive risk evaluation with detailed threat categorization and recommendations.</p>
+                    <ul class="feature-list">
+                        <li>Risk scoring system</li>
+                        <li>Threat categorization</li>
+                        <li>Actionable recommendations</li>
+                        <li>Detailed reports</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+    <footer class="footer">
+        <div class="container">
+            <p> 2025 WebShield.</p><p> All rights reserved. Protecting the web, one URL at a time.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu functionality
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileNav = document.getElementById('mobile-nav');
+            
+            if (mobileMenuBtn && mobileNav) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileNav.classList.toggle('active');
+                });
+                
+                // Close mobile menu when clicking on a link
+                const navLinks = mobileNav.querySelectorAll('a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileNav.classList.remove('active');
+                    });
+                });
+                
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!mobileMenuBtn.contains(e.target) && !mobileNav.contains(e.target)) {
+                        mobileNav.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            setupMobileMenu();
+        });
+    </script>
+</body>
+</html>

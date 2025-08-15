@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan ID Test</title>
+    <style>
+        body { 
+            font-family: system-ui, -apple-system, sans-serif; 
+            margin: 20px; 
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+        .test-section { 
+            margin: 20px 0; 
+            padding: 20px; 
+            border: 1px solid #e2e8f0; 
+            border-radius: 0.75rem;
+            background: white;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+        button { 
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+            color: white;
+            box-shadow: 0 4px 14px 0 rgba(59, 130, 246, 0.25);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 rgba(59, 130, 246, 0.4);
+        }
+        button:focus-visible {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
+        }
+        button:active {
+            transform: translateY(1px);
+        }
+        .result { 
+            margin: 10px 0; 
+            padding: 15px; 
+            background: #f8fafc; 
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        .error { 
+            background: #fef2f2; 
+            color: #dc2626; 
+            border-color: #fecaca;
+        }
+        .success { 
+            background: #f0fdf4; 
+            color: #16a34a; 
+            border-color: #bbf7d0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Scan ID Generation Test</h1>
+    
+    <div class="test-section">
+        <h3>Test 1: Direct API Call</h3>
+        <button onclick="testDirectAPI()">Test Direct API Call</button>
+        <div id="direct-api-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 2: Config.js Loading</h3>
+        <button onclick="testConfigJS()">Test Config.js</button>
+        <div id="config-js-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 3: Scan Function</h3>
+        <button onclick="testScanFunction()">Test Scan Function</button>
+        <div id="scan-function-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>Test 4: API Health Check</h3>
+        <button onclick="testAPIHealth()">Test API Health</button>
+        <div id="api-health-result" class="result"></div>
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // Test 1: Direct API Call
+        async function testDirectAPI() {
+            const resultDiv = document.getElementById('direct-api-result');
+            resultDiv.innerHTML = 'Testing...';
+            resultDiv.className = 'result';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/scan', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: 'https://example.com' })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <strong>Success!</strong><br>
+                        Status: ${response.status}<br>
+                        Scan ID: ${data.scan_id}<br>
+                        URL: ${data.url}<br>
+                        Status: ${data.status}<br>
+                        Full Response: <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    resultDiv.className = 'result success';
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `
+                        <strong>Error!</strong><br>
+                        Status: ${response.status}<br>
+                        Error: ${errorText}
+                    `;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <strong>Exception!</strong><br>
+                    Error: ${error.message}
+                `;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        // Test 2: Config.js Loading
+        function testConfigJS() {
+            const resultDiv = document.getElementById('config-js-result');
+            resultDiv.innerHTML = `
+                <strong>Config.js Status:</strong><br>
+                window.API_BASE_URL: ${window.API_BASE_URL}<br>
+                Type: ${typeof window.API_BASE_URL}<br>
+                Length: ${window.API_BASE_URL ? window.API_BASE_URL.length : 0}<br>
+                Current Location: ${window.location.href}<br>
+                Protocol: ${window.location.protocol}<br>
+                Hostname: ${window.location.hostname}<br>
+                Port: ${window.location.port}
+            `;
+            resultDiv.className = 'result success';
+        }
+        
+        // Test 3: Scan Function
+        async function testScanFunction() {
+            const resultDiv = document.getElementById('scan-function-result');
+            resultDiv.innerHTML = 'Testing scan function...';
+            resultDiv.className = 'result';
+            
+            try {
+                const apiUrl = window.API_BASE_URL || `http://localhost:8000/api`;
+                console.log('Using API URL:', apiUrl);
+                
+                const response = await fetch(`${apiUrl}/scan`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: 'https://example.com' })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <strong>Scan Function Success!</strong><br>
+                        API URL Used: ${apiUrl}<br>
+                        Scan ID: ${data.scan_id}<br>
+                        Status: ${data.status}<br>
+                        Full Response: <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    resultDiv.className = 'result success';
+                } else {
+                    const errorText = await response.text();
+                    resultDiv.innerHTML = `
+                        <strong>Scan Function Error!</strong><br>
+                        API URL Used: ${apiUrl}<br>
+                        Status: ${response.status}<br>
+                        Error: ${errorText}
+                    `;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <strong>Scan Function Exception!</strong><br>
+                    Error: ${error.message}<br>
+                    Stack: ${error.stack}
+                `;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        // Test 4: API Health Check
+        async function testAPIHealth() {
+            const resultDiv = document.getElementById('api-health-result');
+            resultDiv.innerHTML = 'Testing API health...';
+            resultDiv.className = 'result';
+            
+            try {
+                const response = await fetch('http://localhost:8000/api/health');
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.innerHTML = `
+                        <strong>API Health Check Success!</strong><br>
+                        Status: ${data.status}<br>
+                        Timestamp: ${data.timestamp}<br>
+                        Full Response: <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = `
+                        <strong>API Health Check Failed!</strong><br>
+                        Status: ${response.status}<br>
+                        Status Text: ${response.statusText}
+                    `;
+                    resultDiv.className = 'result error';
+                }
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <strong>API Health Check Exception!</strong><br>
+                    Error: ${error.message}
+                `;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        // Auto-run config.js test on load
+        window.addEventListener('load', () => {
+            setTimeout(testConfigJS, 1000);
+        });
+    </script>
+</body>
+</html>

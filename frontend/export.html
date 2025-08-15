@@ -1,0 +1,1190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Export Data - WebShield</title>
+    <script src="config.js"></script>
+    <style>
+        :root {
+            /* Color System */
+            --primary: 220 95% 55%;
+            --primary-glow: 220 90% 65%;
+            --primary-variant: 230 85% 45%;
+            --secondary: 240 5% 15%;
+            --accent: 45 100% 55%;
+            --success: 142 76% 36%;
+            --destructive: 0 72% 51%;
+            --warning: 38 92% 50%;
+            
+            /* Background Colors */
+            --background: 224 71% 4%;
+            --surface: 224 71% 6%;
+            --card: 224 71% 8%;
+            --muted: 215 27% 17%;
+            --border: 215 27% 20%;
+            
+            /* Text Colors */
+            --foreground: 213 31% 91%;
+            --muted-foreground: 215 20% 65%;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+            --gradient-cyber: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-variant)) 50%, hsl(var(--accent)) 100%);
+            --hero-gradient: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--surface)) 50%, hsl(var(--card)) 100%);
+            
+            /* Effects */
+            --glow: 0 0 30px hsl(var(--primary) / 0.3);
+            --glow-strong: 0 0 50px hsl(var(--primary) / 0.5);
+            --shadow-elegant: 0 10px 40px -10px hsl(var(--primary) / 0.2);
+            --border-glow: 0 0 20px hsl(var(--primary) / 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: hsl(var(--surface) / 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid hsl(var(--border));
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: hsl(var(--primary));
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, hsl(210 100% 60%), hsl(160 84% 45%));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, hsl(210 100% 60%), hsl(160 84% 45%));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav a {
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover {
+            color: hsl(var(--primary));
+        }
+
+        .nav a.active {
+            color: hsl(var(--primary));
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid hsl(var(--ring));
+            outline-offset: 2px;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 14px 0 hsl(var(--primary) / 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--primary) / 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: hsl(var(--foreground));
+            border: 2px solid hsl(var(--border));
+        }
+
+        .btn-outline:hover {
+            background: hsl(var(--muted) / 0.5);
+            border-color: hsl(var(--primary));
+            color: hsl(var(--primary));
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, hsl(var(--success)), hsl(142 76% 36%));
+            color: white;
+            box-shadow: 0 4px 14px 0 hsl(var(--success) / 0.25);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--success) / 0.4);
+        }
+
+
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: var(--gradient-cyber);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+            font-size: 1.125rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Export Options */
+        .export-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        .export-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            padding: 2rem;
+            transition: all 0.2s;
+        }
+
+        .export-card:hover {
+            border-color: hsl(var(--primary) / 0.3);
+            box-shadow: var(--border-glow);
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 48px;
+            height: 48px;
+            background: var(--gradient-cyber);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.25rem;
+        }
+
+        .card-subtitle {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .card-description {
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+
+        .export-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        /* Filters */
+        .filters {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-label {
+            font-weight: 500;
+            color: hsl(var(--foreground));
+        }
+
+        .filter-input {
+            padding: 0.75rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            font-size: 0.875rem;
+            background: hsl(var(--surface));
+            color: hsl(var(--foreground));
+        }
+
+        .filter-input:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1);
+        }
+
+        .filter-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        /* Progress Section */
+        .progress-section {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            display: none;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .progress-title {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+        }
+
+        .progress-percentage {
+            font-weight: 600;
+            color: hsl(var(--primary-foreground));
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: hsl(var(--border));
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-cyber);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-status {
+            margin-top: 0.5rem;
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Export History */
+        .export-history {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .history-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .history-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: hsl(var(--surface));
+            border-radius: 8px;
+        }
+
+        .history-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .history-name {
+            font-weight: 500;
+            color: hsl(var(--foreground));
+        }
+
+        .history-date {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .history-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Recent Scans Section */
+        .recent-scans-section {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.875rem;
+            font-weight: bold;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header p {
+            font-size: 1rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .recent-scans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .recent-scan-card {
+            background: hsl(var(--surface));
+            border: 1px solid hsl(var(--border));
+            border-radius: 10px;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            transition: all 0.2s;
+        }
+
+        .recent-scan-card:hover {
+            border-color: hsl(var(--primary) / 0.3);
+            box-shadow: var(--border-glow);
+        }
+
+        .recent-scan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .recent-scan-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+        }
+
+        .recent-scan-date {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .recent-scan-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .loading-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem 0;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .spinner {
+            border: 4px solid hsl(var(--muted-foreground) / 0.3);
+            border-top: 4px solid hsl(var(--primary));
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-bottom: 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* Scan Status Badges */
+        .scan-status {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+        
+        .status-completed {
+            background: hsl(var(--success) / 0.2);
+            color: hsl(var(--success));
+            border: 1px solid hsl(var(--success) / 0.3);
+        }
+        
+        .status-processing {
+            background: hsl(var(--warning) / 0.2);
+            color: hsl(var(--warning));
+            border: 1px solid hsl(var(--warning) / 0.3);
+        }
+        
+        .status-failed {
+            background: hsl(var(--destructive) / 0.2);
+            color: hsl(var(--destructive));
+            border: 1px solid hsl(var(--destructive) / 0.3);
+        }
+        
+        .threat-badge {
+            background: hsl(var(--destructive) / 0.2);
+            color: hsl(var(--destructive));
+            border: 1px solid hsl(var(--destructive) / 0.3);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .safe-badge {
+            background: hsl(var(--success) / 0.2);
+            color: hsl(var(--success));
+            border: 1px solid hsl(var(--success) / 0.3);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .export-options {
+                grid-template-columns: 1fr;
+            }
+
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .history-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+        }
+.footer {
+    background: hsl(var(--surface) / 0.8);
+    padding: 0.5rem 0;
+    text-align: center;
+    font-size: 1rem;
+    color: hsl(var(--muted-foreground));
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                                    <a href="index.html" class="logo">
+                    <div class="logo-icon">🛡️</div>
+                    WebShield
+                </a>
+                
+                <nav class="nav" id="mobile-nav">
+                    <a href="index.html">Home</a>
+                    <a href="features.html">Features</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="how-to-install.html">Extension</a>
+                    <a href="about.html">About</a>
+                </nav>
+                
+                <button class="mobile-menu-btn" id="mobile-menu-btn" style="display: none;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn btn-outline" id="signin-btn">Sign In</a>
+                    <a href="register.html" class="btn btn-primary" id="getstarted-btn">Get Started</a>
+                    <div id="profile-section" style="display: none;">
+                        <span id="user-name">User</span>
+                        <a href="profile.html" class="btn btn-outline">Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Export Data</h1>
+                <p class="page-subtitle">Export your scan reports, settings, and data in various formats</p>
+            </div>
+
+            <!-- Filters -->
+            <div class="filters">
+                <h3 style="margin-bottom: 1rem; color: hsl(var(--foreground));">Export Filters</h3>
+                <div class="filters-grid">
+                    <div class="filter-group">
+                        <label class="filter-label">Date Range</label>
+                        <input type="date" class="filter-input" id="start-date">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">End Date</label>
+                        <input type="date" class="filter-input" id="end-date">
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Data Type</label>
+                        <select class="filter-input filter-select" id="data-type">
+                            <option value="all">All Data</option>
+                            <option value="scans">Scan Reports</option>
+                            <option value="threats">Threat Reports</option>
+                            <option value="settings">Settings</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label class="filter-label">Format</label>
+                        <select class="filter-input filter-select" id="export-format">
+                            <option value="json">JSON</option>
+                            <option value="csv">CSV</option>
+                            <option value="pdf">PDF</option>
+                            <option value="excel">Excel</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Options -->
+            <div class="export-options">
+                <!-- Scan Reports -->
+                <div class="export-card">
+                    <div class="card-header">
+                        <div class="card-icon">📊</div>
+                        <div>
+                            <div class="card-title">Scan Reports</div>
+                            <div class="card-subtitle">Export all your URL scan results</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Export detailed scan reports including threat analysis, detection results, and security scores for all your scanned URLs.
+                    </div>
+                    <div class="export-actions">
+                        <button class="btn btn-primary btn-sm" onclick="exportData('scans', 'json')">Export JSON</button>
+                        <button class="btn btn-outline btn-sm" onclick="exportData('scans', 'csv')">Export CSV</button>
+                        <button class="btn btn-outline btn-sm" onclick="exportData('scans', 'pdf')">Export PDF</button>
+                    </div>
+                </div>
+
+                <!-- Complete Backup -->
+                <div class="export-card">
+                    <div class="card-header">
+                        <div class="card-icon">💾</div>
+                        <div>
+                            <div class="card-title">Complete Backup</div>
+                            <div class="card-subtitle">Export everything</div>
+                        </div>
+                    </div>
+                    <div class="card-description">
+                        Create a complete backup of all your data including scans, settings, and account information in a single file.
+                    </div>
+                    <div class="export-actions">
+                        <button class="btn btn-success btn-sm" onclick="exportData('complete', 'json')">Create Backup</button>
+                        <button class="btn btn-outline btn-sm" onclick="exportData('complete', 'zip')">Export ZIP</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Scans Section -->
+            <section class="recent-scans-section">
+                <div class="container">
+                    <div class="section-header">
+                        <h2>Recent Scans</h2>
+                        <p>Download reports from your recent security scans</p>
+                    </div>
+                    
+                    <div class="recent-scans-grid" id="recent-scans-container">
+                        <div class="loading-placeholder">
+                            <div class="spinner"></div>
+                            <p>Loading recent scans...</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Progress Section -->
+            <div class="progress-section" id="progress-section">
+                <div class="progress-header">
+                    <div class="progress-title">Exporting Data...</div>
+                    <div class="progress-percentage" id="progress-percentage">0%</div>
+                </div>
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress-fill"></div>
+                </div>
+                <div class="progress-status" id="progress-status">Preparing export...</div>
+            </div>
+
+            <!-- Export History -->
+            <div class="export-history">
+                <div class="history-header">
+                    <div class="history-title">Recent Exports</div>
+                    <button class="btn btn-outline btn-sm" onclick="refreshHistory()">Refresh</button>
+                </div>
+                <div class="history-list" id="history-list">
+                    <!-- Export history items will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Check login status and update header accordingly
+        function checkLoginStatus() {
+            const signInBtn = document.getElementById('signin-btn');
+            const getStartedBtn = document.getElementById('getstarted-btn');
+            const profileSection = document.getElementById('profile-section');
+            const userName = document.getElementById('user-name');
+            
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const userEmail = localStorage.getItem('userEmail');
+            const userNameValue = localStorage.getItem('userName');
+            
+            console.log('Login status check:', { isLoggedIn, userEmail, userNameValue });
+            
+            if (isLoggedIn && profileSection) {
+                // User is logged in - show profile section, hide auth buttons
+                profileSection.style.display = 'block';
+                if (signInBtn) signInBtn.style.display = 'none';
+                if (getStartedBtn) getStartedBtn.style.display = 'none';
+                if (userName) userName.textContent = userNameValue || userEmail?.split('@')[0] || 'Profile';
+                console.log('Profile section shown');
+            } else {
+                // User is not logged in - show auth buttons, hide profile section
+                if (profileSection) profileSection.style.display = 'none';
+                if (signInBtn) signInBtn.style.display = 'inline-flex';
+                if (getStartedBtn) getStartedBtn.style.display = 'inline-flex';
+                console.log('Auth buttons shown');
+            }
+        }
+
+        // Export data function
+        async function exportData(dataType, format) {
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) {
+                alert('Please sign in to export your data.');
+                return;
+            }
+
+            // Show progress section
+            const progressSection = document.getElementById('progress-section');
+            progressSection.style.display = 'block';
+
+            try {
+                // Create export job
+                const response = await fetch(`${window.API_BASE_URL}/export/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        export_type: dataType,
+                        format: format,
+                        user_email: userEmail
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Simulate progress while waiting for background processing
+                    let progress = 0;
+                    const progressFill = document.getElementById('progress-fill');
+                    const progressPercentage = document.getElementById('progress-percentage');
+                    const progressStatus = document.getElementById('progress-status');
+
+                    const interval = setInterval(async () => {
+                        progress += Math.random() * 15;
+                        if (progress > 100) progress = 100;
+
+                        progressFill.style.width = progress + '%';
+                        progressPercentage.textContent = Math.round(progress) + '%';
+
+                        if (progress < 30) {
+                            progressStatus.textContent = 'Gathering data...';
+                        } else if (progress < 60) {
+                            progressStatus.textContent = 'Processing export...';
+                        } else if (progress < 90) {
+                            progressStatus.textContent = 'Generating file...';
+                        } else {
+                            progressStatus.textContent = 'Preparing download...';
+                        }
+
+                        if (progress >= 100) {
+                            clearInterval(interval);
+                            setTimeout(async () => {
+                                // Hide progress and show success
+                                progressSection.style.display = 'none';
+                                
+                                // Create and download file
+                                const fileName = data.file_name;
+                                const fileContent = generateExportContent(dataType, format);
+                                downloadFile(fileName, fileContent, format);
+                                
+                                // Add to history
+                                addToHistory(dataType, format, fileName);
+                                
+                                alert(`Export completed! File: ${fileName}`);
+                            }, 500);
+                        }
+                    }, 200);
+                } else {
+                    alert('Failed to create export. Please try again.');
+                    progressSection.style.display = 'none';
+                }
+            } catch (error) {
+                console.error('Error creating export:', error);
+                alert('Error creating export. Please try again.');
+                progressSection.style.display = 'none';
+            }
+        }
+
+        // Generate export content
+        function generateExportContent(dataType, format) {
+            const timestamp = new Date().toISOString();
+            const userEmail = localStorage.getItem('userEmail');
+            
+            let content = '';
+            
+            if (format === 'json') {
+                content = JSON.stringify({
+                    export_type: dataType,
+                    user_email: userEmail,
+                    export_date: timestamp,
+                    data: {
+                        // Mock data - in real app this would come from server
+                        scans: dataType === 'scans' || dataType === 'complete' ? [] : null,
+                        threats: dataType === 'threats' || dataType === 'complete' ? [] : null,
+                        settings: dataType === 'settings' || dataType === 'complete' ? {} : null
+                    }
+                }, null, 2);
+            } else if (format === 'csv') {
+                content = `Export Type,User Email,Export Date\n${dataType},${userEmail},${timestamp}`;
+            } else {
+                content = `WebShield Export\nType: ${dataType}\nUser: ${userEmail}\nDate: ${timestamp}`;
+            }
+            
+            return content;
+        }
+
+        // Download file
+        function downloadFile(fileName, content, format) {
+            const blob = new Blob([content], { 
+                type: format === 'json' ? 'application/json' : 
+                      format === 'csv' ? 'text/csv' : 'text/plain' 
+            });
+            
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        // Add to export history
+        function addToHistory(dataType, format, fileName) {
+            const history = JSON.parse(localStorage.getItem('exportHistory') || '[]');
+            const newExport = {
+                id: Date.now(),
+                dataType: dataType,
+                format: format,
+                fileName: fileName,
+                date: new Date().toISOString()
+            };
+            
+            history.unshift(newExport);
+            if (history.length > 10) history.pop(); // Keep only last 10 exports
+            
+            localStorage.setItem('exportHistory', JSON.stringify(history));
+            loadHistory();
+        }
+
+        // Load export history
+        async function loadHistory() {
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) {
+                // Fallback to localStorage
+                const history = JSON.parse(localStorage.getItem('exportHistory') || '[]');
+                displayHistory(history);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/export/history?user_email=${encodeURIComponent(userEmail)}&limit=10`);
+                if (response.ok) {
+                    const data = await response.json();
+                    displayHistory(data.exports);
+                } else {
+                    // Fallback to localStorage
+                    const history = JSON.parse(localStorage.getItem('exportHistory') || '[]');
+                    displayHistory(history);
+                }
+            } catch (error) {
+                console.error('Error loading export history:', error);
+                // Fallback to localStorage
+                const history = JSON.parse(localStorage.getItem('exportHistory') || '[]');
+                displayHistory(history);
+            }
+        }
+
+        // Helper function to display history
+        function displayHistory(exports) {
+            const historyList = document.getElementById('history-list');
+            
+            if (exports.length === 0) {
+                historyList.innerHTML = '<div style="text-align: center; color: hsl(var(--muted-foreground)); padding: 2rem;">No export history found</div>';
+                return;
+            }
+            
+            historyList.innerHTML = exports.map(exportItem => `
+                <div class="history-item">
+                    <div class="history-info">
+                        <div class="history-name">${exportItem.export_type.charAt(0).toUpperCase() + exportItem.export_type.slice(1)} Export</div>
+                        <div class="history-date">${new Date(exportItem.created_at).toLocaleDateString()} - ${exportItem.format.toUpperCase()}</div>
+                    </div>
+                    <div class="history-actions">
+                        <button class="btn btn-outline btn-sm" onclick="downloadHistory('${exportItem.file_name}')">Download</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Download from history
+        function downloadHistory(fileName) {
+            // In a real app, this would fetch the file from the server
+            alert(`Downloading ${fileName}...`);
+        }
+
+        // Refresh history
+        function refreshHistory() {
+            loadHistory();
+        }
+        
+        // Load recent scans
+        async function loadRecentScans() {
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) {
+                showNoScansMessage();
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/user_scans?email=${encodeURIComponent(userEmail)}&limit=6`);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.scans && data.scans.length > 0) {
+                        displayRecentScans(data.scans);
+                    } else {
+                        showNoScansMessage();
+                    }
+                } else {
+                    showNoScansMessage();
+                }
+            } catch (error) {
+                console.error('Error loading recent scans:', error);
+                showNoScansMessage();
+            }
+        }
+        
+        // Display recent scans
+        function displayRecentScans(scans) {
+            const container = document.getElementById('recent-scans-container');
+            
+            container.innerHTML = scans.map(scan => `
+                <div class="recent-scan-card">
+                    <div class="recent-scan-header">
+                        <div>
+                            <div class="recent-scan-title">${scan.url}</div>
+                            <div class="recent-scan-date">${new Date(scan.created_at).toLocaleDateString()}</div>
+                        </div>
+                        <div class="recent-scan-actions">
+                            <button class="btn btn-outline btn-sm" onclick="viewScanDetails('${scan.scan_id}')">View</button>
+                            <button class="btn btn-primary btn-sm" onclick="downloadScanReport('${scan.scan_id}', '${scan.url}')">Download</button>
+                        </div>
+                    </div>
+                    <div class="scan-status">
+                        <span class="status-badge status-${scan.status}">${scan.status}</span>
+                        ${scan.is_malicious ? '<span class="threat-badge">Threat Detected</span>' : '<span class="safe-badge">Safe</span>'}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Show no scans message
+        function showNoScansMessage() {
+            const container = document.getElementById('recent-scans-container');
+            container.innerHTML = `
+                <div class="recent-scan-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">🔍</div>
+                    <h3>No Scans Found</h3>
+                    <p>You haven't performed any security scans yet. Start by scanning a URL to generate reports.</p>
+                    <a href="scan-url.html" class="btn btn-primary">Start Scanning</a>
+                </div>
+            `;
+        }
+        
+        // View scan details
+        function viewScanDetails(scanId) {
+            const redirectUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/scan_report.html?scan_id=${scanId}`;
+            window.open(redirectUrl, '_blank');
+        }
+        
+        // Download scan report
+        async function downloadScanReport(scanId, url) {
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/scan_report/${scanId}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    
+                    // Create downloadable report
+                    const report = {
+                        scan_id: scanId,
+                        url: url,
+                        scan_date: new Date().toISOString(),
+                        results: data,
+                        summary: {
+                            is_malicious: data.is_malicious,
+                            threat_level: data.threat_level,
+                            malicious_count: data.malicious_count,
+                            ssl_valid: data.ssl_valid
+                        }
+                    };
+                    
+                    // Convert to JSON and download
+                    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = downloadUrl;
+                    a.download = `scan_report_${scanId}_${new Date().toISOString().split('T')[0]}.json`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(downloadUrl);
+                    
+                    // Add to export history
+                    addToHistory('Scan Report', 'JSON', a.download);
+                    
+                } else {
+                    alert('Failed to download scan report. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error downloading scan report:', error);
+                alert('Error downloading scan report. Please try again.');
+            }
+        }
+
+        // Mobile menu functionality
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileNav = document.getElementById('mobile-nav');
+            
+            if (mobileMenuBtn && mobileNav) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileNav.classList.toggle('active');
+                });
+                
+                // Close mobile menu when clicking on a link
+                const navLinks = mobileNav.querySelectorAll('a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileNav.classList.remove('active');
+                    });
+                });
+                
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!mobileMenuBtn.contains(e.target) && !mobileNav.contains(e.target)) {
+                        mobileNav.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure API_BASE_URL is available
+            if (!window.API_BASE_URL) {
+                console.warn('⚠️ API_BASE_URL not found, using fallback');
+                window.API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+                console.log('🔧 Fallback API_BASE_URL:', window.API_BASE_URL);
+            }
+            
+            checkLoginStatus();
+            setupMobileMenu();
+            loadHistory();
+            loadRecentScans(); // Load recent scans on page load
+        });
+    </script>
+    <footer class="footer">
+        <div class="container">
+            <p> 2025 WebShield</p>
+            <p>All rights reserved. Protecting the web, one URL at a time.</p>
+        </div>
+    </footer>
+</body>
+</html> 

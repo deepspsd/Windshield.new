@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WebShield Extension</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="popup-root">
+    <!-- Header with Controls -->
+    <div class="header">
+      <div class="logo">
+        <span class="logo-icon">🛡️</span>
+        <span class="logo-text">WebShield</span>
+      </div>
+      <div class="header-controls">
+        <button id="refresh-btn" class="icon-btn" title="Refresh">
+          <span class="icon">🔄</span>
+        </button>
+        <button id="settings-btn" class="icon-btn" title="Settings">
+          <span class="icon">⚙️</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Protection Status Banner -->
+    <div class="protection-banner">
+      <div class="banner-content">
+        <button class="toggle-btn" id="extension-toggle" title="Toggle Extension">
+          <span class="toggle-slider"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Current Page Analysis -->
+    <div class="current-page-section">
+      <div class="section-title">
+        <span class="icon">📍</span>
+        Current Page
+      </div>
+      <div class="page-info">
+        <div class="page-url" id="current-url">Loading...</div>
+        <div class="page-analysis">
+          <div class="analysis-item">
+            <span class="analysis-icon" id="ssl-icon">🔒</span>
+            <span class="analysis-label">SSL:</span>
+            <span class="analysis-value" id="ssl-status">Checking...</span>
+          </div>
+          <div class="analysis-item">
+            <span class="analysis-icon" id="threat-icon">🛡️</span>
+            <span class="analysis-label">Threat Level:</span>
+            <span class="analysis-value" id="threat-level">Analyzing...</span>
+          </div>
+          <div class="analysis-item">
+            <span class="analysis-icon">🏆</span>
+            <span class="analysis-label">Reputation:</span>
+            <span class="analysis-value" id="domain-reputation">Checking...</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- View Details Button placed below Current Page -->
+    <div class="navigation-section">
+      <div class="nav-buttons">
+        <button id="view-details-btn" class="nav-btn primary">
+          <span class="btn-icon">📋</span>
+          <span class="btn-text">View Details</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Recent Alerts -->
+    <div class="alerts-section">
+      <div class="section-title">
+        <span class="icon">🚨</span>
+        Recent Alerts
+      </div>
+      <div class="alerts-list" id="alerts-list">
+        <div class="no-alerts">
+          <span class="no-alerts-icon">✅</span>
+          <span class="no-alerts-text">No recent alerts</span>
+          <span class="no-alerts-subtext">Your browsing is safe</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="actions-section">
+      <div class="section-title">
+        <span class="icon">⚡</span>
+        Quick Actions
+      </div>
+      <div class="action-buttons">
+        
+        <button id="emergency-btn" class="action-btn danger">
+          <span class="btn-icon">🚨</span>
+          <span class="btn-text">Emergency</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Navigation -->
+    <div class="navigation-section">
+      <div class="nav-buttons">
+        <button id="dashboard-btn" class="nav-btn">
+          <span class="btn-icon">📊</span>
+          <span class="btn-text">Dashboard</span>
+        </button>
+        <button id="export-btn" class="nav-btn">
+          <span class="btn-icon">📤</span>
+          <span class="btn-text">Export</span>
+        </button>
+        <button id="help-btn" class="nav-btn">
+          <span class="btn-icon">❓</span>
+          <span class="btn-text">Help</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Report Frame -->
+    <div class="report-section" id="report-section" style="display: none;">
+      <div class="section-title">
+        <span class="icon">📊</span>
+        Scan Report
+        <button id="close-report" style="margin-left: auto; background: none; border: none; font-size: 1.2rem; cursor: pointer;">✕</button>
+      </div>
+      <iframe id="report-frame" src="" style="width:100%;height:400px;border:none;border-radius:8px;background:#f8f9fa;"></iframe>
+    </div>
+
+    <!-- Advanced Features -->
+    <div class="advanced-section">
+      <div class="offline-info" id="offline-info" style="display:none;">
+        <span class="offline-icon">📱</span>
+        <span class="offline-text">Offline Mode: Using cached data</span>
+      </div>
+      <div class="custom-alerts-info">
+        <span class="custom-icon">⚙️</span>
+        <span class="custom-text">3 active rules | Real-time: Enabled</span>
+      </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" class="loading-overlay" style="display:none;">
+      <div class="loading-spinner"></div>
+      <div class="loading-text">Updating...</div>
+    </div>
+
+    <!-- Error Overlay -->
+    <div id="error-overlay" class="error-overlay" style="display:none;">
+      <div class="error-icon">⚠️</div>
+      <div class="error-text">Connection failed</div>
+      <button id="retry-btn" class="retry-btn">Retry</button>
+    </div>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html> 

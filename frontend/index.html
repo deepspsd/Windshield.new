@@ -1,0 +1,2325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebShield - Advanced Web Security</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            /* Enhanced Color Palette - Modern Cyber Security Theme */
+            --background: 220 25% 3%;
+            --foreground: 220 25% 98%;
+            --card: 220 25% 5%;
+            --card-foreground: 220 25% 98%;
+            
+            /* Primary - Electric Blue */
+            --primary: 210 100% 60%;
+            --primary-foreground: 220 25% 98%;
+            
+            /* Secondary - Deep Purple */
+            --secondary: 250 25% 15%;
+            --secondary-foreground: 220 25% 98%;
+            
+            /* Muted - Subtle Gray */
+            --muted: 220 25% 12%;
+            --muted-foreground: 220 25% 70%;
+            
+            /* Accent - Cyber Green */
+            --accent: 160 84% 45%;
+            --accent-foreground: 220 25% 98%;
+            
+            /* Success - Emerald */
+            --success: 160 84% 45%;
+            
+            /* Warning - Amber */
+            --warning: 45 93% 47%;
+            
+            /* Destructive - Electric Red */
+            --destructive: 0 84% 60%;
+            --destructive-foreground: 220 25% 98%;
+            
+            /* Border - Subtle */
+            --border: 220 25% 15%;
+            --ring: 210 100% 60%;
+            --radius: 0.75rem;
+            
+            /* Additional Colors for Enhanced UI */
+            --gradient-primary: linear-gradient(135deg, hsl(210 100% 60%), hsl(250 100% 60%));
+            --gradient-accent: linear-gradient(135deg, hsl(160 84% 45%), hsl(210 100% 60%));
+            --gradient-success: linear-gradient(135deg, hsl(160 84% 45%), hsl(142 76% 36%));
+            --gradient-warning: linear-gradient(135deg, hsl(45 93% 47%), hsl(38 92% 50%));
+            --gradient-danger: linear-gradient(135deg, hsl(0 84% 60%), hsl(0 72% 51%));
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Mobile-first responsive design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.75rem;
+            }
+        }
+
+        /* Header */
+        .header {
+            border-bottom: 1px solid hsl(var(--border) / 0.5);
+            background-color: hsl(var(--card) / 0.5);
+            backdrop-filter: blur(8px);
+        }
+
+        .header-content {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        /* Mobile header adjustments */
+        @media (max-width: 768px) {
+            .header-content {
+                height: 56px;
+                padding: 0 0.5rem;
+            }
+            
+            .logo-text {
+                font-size: 1.25rem;
+            }
+            
+            .logo-icon {
+                width: 28px;
+                height: 28px;
+            }
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav {
+            display: none;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .nav {
+                display: flex;
+            }
+        }
+
+        /* Mobile navigation improvements */
+        @media (max-width: 767px) {
+            .nav {
+                position: fixed;
+                top: 56px;
+                left: 0;
+                right: 0;
+                background: hsl(var(--card));
+                border-bottom: 1px solid hsl(var(--border));
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+                z-index: 1000;
+                transform: translateY(-100%);
+                transition: transform 0.3s ease;
+            }
+            
+            .nav.active {
+                transform: translateY(0);
+            }
+            
+            .nav a {
+                padding: 0.75rem 1rem;
+                border-radius: var(--radius);
+                background: hsl(var(--muted) / 0.3);
+            }
+            
+            .mobile-menu-btn {
+                display: flex !important;
+                background: none;
+                border: none;
+                color: hsl(var(--foreground));
+                cursor: pointer;
+                padding: 0.5rem;
+                border-radius: var(--radius);
+                transition: background 0.3s;
+            }
+            
+            .mobile-menu-btn:hover {
+                background: hsl(var(--muted));
+            }
+        }
+
+        .nav a {
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: hsl(var(--primary));
+        }
+
+        .header-buttons {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Mobile header buttons */
+        @media (max-width: 768px) {
+            .header-buttons {
+                gap: 0.5rem;
+            }
+            
+            .btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+            
+            .btn .icon {
+                width: 1rem;
+                height: 1rem;
+            }
+        }
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid hsl(var(--ring));
+            outline-offset: 2px;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: hsl(var(--foreground));
+            border: 1px solid transparent;
+        }
+
+        .btn-ghost:hover {
+            background: hsl(var(--muted) / 0.5);
+            border-color: hsl(var(--border));
+        }
+
+        .btn-hero {
+            background: var(--gradient-primary);
+            color: white;
+            border: 1px solid transparent;
+            box-shadow: 0 4px 14px 0 hsl(var(--primary) / 0.25);
+        }
+
+        .btn-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--primary) / 0.4);
+        }
+
+        .btn-hero:hover::before {
+            left: 100%;
+        }
+
+        .btn-lg {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+        }
+
+        .btn-scan {
+            background: var(--gradient-accent);
+            color: white;
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            font-weight: 700;
+            box-shadow: 0 4px 14px 0 hsl(var(--accent) / 0.25);
+        }
+
+        .btn-scan::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-scan:hover::before {
+            left: 100%;
+        }
+
+        .btn-scan:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--accent) / 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: hsl(var(--foreground));
+            border: 2px solid hsl(var(--border));
+        }
+
+        .btn-outline:hover {
+            background: hsl(var(--muted) / 0.5);
+            border-color: hsl(var(--primary));
+            color: hsl(var(--primary));
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        /* Additional button variants */
+        .btn-success {
+            background: linear-gradient(135deg, hsl(var(--success)), hsl(142 76% 36%));
+            color: white;
+            box-shadow: 0 4px 14px 0 hsl(var(--success) / 0.25);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--success) / 0.4);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, hsl(var(--warning)), hsl(38 92% 50%));
+            color: white;
+            box-shadow: 0 4px 14px 0 hsl(var(--warning) / 0.25);
+        }
+
+        .btn-warning:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--warning) / 0.4);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, hsl(var(--destructive)), hsl(0 72% 51%));
+            color: white;
+            box-shadow: 0 4px 14px 0 hsl(var(--destructive) / 0.25);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--destructive) / 0.4);
+        }
+
+        /* Button states */
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn:disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Button groups */
+        .btn-group {
+            display: inline-flex;
+            border-radius: 0.75rem;
+            overflow: hidden;
+        }
+
+        .btn-group .btn {
+            border-radius: 0;
+            border-right: 1px solid hsl(var(--border) / 0.2);
+        }
+
+        .btn-group .btn:first-child {
+            border-top-left-radius: 0.75rem;
+            border-bottom-left-radius: 0.75rem;
+        }
+
+        .btn-group .btn:last-child {
+            border-top-right-radius: 0.75rem;
+            border-bottom-right-radius: 0.75rem;
+            border-right: none;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 5rem 0;
+        }
+
+        /* Mobile hero section */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 3rem 0;
+            }
+            
+            .hero h1 {
+                font-size: clamp(2rem, 8vw, 2.5rem);
+                line-height: 1.2;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+                margin-bottom: 2rem;
+            }
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background-image: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--primary) / 0.1) 50%, hsl(var(--accent) / 0.1) 100%);
+        }
+
+        .hero-content {
+            position: relative;
+            text-align: center;
+            max-width: 64rem;
+            margin: 0 auto;
+        }
+
+        .hero h1 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            font-weight: bold;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero-gradient {
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+
+        .hero p {
+            font-size: clamp(1rem, 2vw, 1.25rem);
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 3rem;
+            max-width: 48rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* URL Scanner */
+        .scanner-container {
+            max-width: 32rem;
+            margin: 0 auto 4rem;
+        }
+
+        /* Enhanced Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .scanner-container {
+                max-width: 100%;
+                margin: 0 auto 2rem;
+                padding: 0 0.5rem;
+            }
+            
+            .scanner-form {
+                flex-direction: column;
+                gap: 1rem;
+                width: 100%;
+            }
+            
+            .scanner-input {
+                height: 3.5rem;
+                font-size: 1rem;
+                padding: 0 3rem 0 1rem;
+            }
+            
+            .btn-scan {
+                padding: 1rem 2rem;
+                font-size: 1rem;
+                width: 100%;
+                max-width: 300px;
+                margin: 0 auto;
+            }
+            
+            .hero-content h1 {
+                font-size: 2rem;
+                line-height: 1.2;
+            }
+            
+            .hero-content p {
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+            
+            .hero {
+                padding: 3rem 0;
+            }
+            
+            .hero-content {
+                padding: 0 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .scanner-input {
+                height: 3rem;
+                font-size: 0.9rem;
+            }
+            
+            .btn-scan {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+            }
+            
+            .hero-content h1 {
+                font-size: 1.75rem;
+            }
+            
+            .hero-content p {
+                font-size: 0.9rem;
+            }
+        }
+
+        .scanner-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .scanner-input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .scanner-input {
+            width: 100%;
+            height: 3.5rem;
+            padding: 0 3rem 0 1rem;
+            background: hsl(var(--card));
+            border: 2px solid hsl(var(--border));
+            border-radius: var(--radius);
+            color: hsl(var(--foreground));
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .scanner-input:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
+            transform: scale(1.02);
+        }
+
+        .scanner-input:hover {
+            border-color: hsl(var(--primary) / 0.5);
+        }
+
+        .scanner-icon {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: hsl(var(--muted-foreground));
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        @media (min-width: 640px) {
+            .hero-buttons {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+
+        /* Mobile hero buttons */
+        @media (max-width: 768px) {
+            .hero-buttons {
+                gap: 0.75rem;
+            }
+            
+            .btn-lg {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+                width: 100%;
+                max-width: 280px;
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 0;
+        }
+
+        /* Mobile features section */
+        @media (max-width: 768px) {
+            .features {
+                padding: 3rem 0;
+            }
+            
+            .features h2 {
+                font-size: 2rem;
+            }
+            
+            .features-desc {
+                font-size: 1rem;
+            }
+        }
+
+        .features-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .features h2 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .features-desc {
+            font-size: 1.25rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 32rem;
+            margin: 0 auto;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .features-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        /* Mobile features grid */
+        @media (max-width: 768px) {
+            .features-grid {
+                gap: 1.5rem;
+            }
+            
+            .feature-card {
+                padding: 1.25rem;
+            }
+            
+            .feature-title {
+                font-size: 1.1rem;
+            }
+        }
+
+        .feature-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-accent);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px -10px hsl(var(--accent) / 0.3);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-icon {
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            background: hsl(var(--primary) / 0.1);
+            border: 1px solid hsl(var(--primary) / 0.2);
+            color: hsl(var(--primary));
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+
+        .feature-desc {
+            color: hsl(var(--muted-foreground));
+            line-height: 1.6;
+        }
+
+        /* Recent Scans Section */
+        .recent-scans {
+            padding: 5rem 0;
+            background: hsl(var(--card) / 0.1);
+        }
+
+        /* Mobile recent scans section */
+        @media (max-width: 768px) {
+            .recent-scans {
+                padding: 3rem 0;
+            }
+            
+            .recent-scans h2 {
+                font-size: 2rem;
+            }
+            
+            .recent-scans-desc {
+                font-size: 1rem;
+            }
+        }
+
+        .recent-scans-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .recent-scans h2 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .recent-scans-desc {
+            font-size: 1.25rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 32rem;
+            margin: 0 auto;
+        }
+
+        .recent-scans-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .recent-scans-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .recent-scans-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .recent-scan-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .recent-scan-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px -5px hsl(var(--accent) / 0.2);
+        }
+
+        .recent-scan-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .recent-scan-url {
+            font-weight: 600;
+                color: hsl(var(--foreground));
+            font-size: 0.9rem;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            max-width: 200px;
+        }
+
+        .recent-scan-status {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .recent-scan-status.safe {
+            background: hsl(142 76% 36% / 0.1);
+            color: hsl(142 76% 36%);
+        }
+
+        .recent-scan-status.warning {
+            background: hsl(38 92% 50% / 0.1);
+            color: hsl(38 92% 50%);
+        }
+
+        .recent-scan-status.danger {
+            background: hsl(0 84% 60% / 0.1);
+            color: hsl(0 84% 60%);
+        }
+
+        .recent-scan-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .recent-scan-detail {
+            text-align: center;
+        }
+
+        .recent-scan-detail-label {
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 0.25rem;
+        }
+
+        .recent-scan-detail-value {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+        }
+
+        .recent-scan-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .recent-scan-actions .btn {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            border-radius: 0.75rem;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .recent-scan-actions .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .recent-scan-actions .btn:active {
+            transform: translateY(1px);
+        }
+
+        .recent-scans-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .recent-scans-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .recent-scans-actions .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+
+        /* Extension CTA */
+        .extension-cta {
+            padding: 5rem 0;
+            background: hsl(var(--card) / 0.3);
+            text-align: center;
+        }
+
+        /* Mobile extension CTA */
+        @media (max-width: 768px) {
+            .extension-cta {
+                padding: 3rem 0;
+            }
+            
+            .extension h2 {
+                font-size: 2rem;
+            }
+            
+            .extension p {
+                font-size: 1rem;
+            }
+        }
+
+        .extension-content {
+            max-width: 48rem;
+            margin: 0 auto;
+        }
+
+        .extension-icon {
+            width: 4rem;
+            height: 4rem;
+            margin: 0 auto 1.5rem;
+            border-radius: 1rem;
+            background: hsl(var(--primary) / 0.1);
+            border: 1px solid hsl(var(--primary) / 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: hsl(var(--primary));
+            font-size: 2rem;
+        }
+
+        .extension h2 {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .extension p {
+            font-size: 1.25rem;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 2rem;
+        }
+
+        .extension-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        @media (min-width: 640px) {
+            .extension-buttons {
+                flex-direction: row;
+                justify-content: center;
+            }
+        }
+
+        /* Mobile extension buttons */
+        @media (max-width: 768px) {
+            .extension-buttons {
+                gap: 0.75rem;
+            }
+            
+            .extension-buttons .btn-lg {
+                width: 100%;
+                max-width: 280px;
+                padding: 0.75rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid hsl(var(--border) / 0.5);
+            padding: 3rem 0;
+            background: hsl(var(--card) / 0.2);
+        }
+
+        /* Mobile footer */
+        @media (max-width: 768px) {
+            .footer {
+                padding: 2rem 0;
+            }
+            
+            .footer-grid {
+                gap: 1.5rem;
+            }
+            
+            .footer h4 {
+                font-size: 1rem;
+            }
+            
+            .footer li {
+                font-size: 0.9rem;
+            }
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .footer h4 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .footer ul {
+            list-style: none;
+        }
+
+        .footer li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer a {
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer a:hover {
+            color: hsl(var(--primary));
+        }
+
+        .footer-bottom {
+            border-top: 1px solid hsl(var(--border) / 0.5);
+            margin-top: 2rem;
+            padding-top: 2rem;
+            text-align: center;
+            color: hsl(var(--muted-foreground));
+        }
+
+        /* Icons (simple replacements) */
+        .icon {
+            display: inline-block;
+            width: 1.25rem;
+            height: 1.25rem;
+            transition: transform 0.3s ease;
+        }
+
+        .icon-lg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        /* Optimized animations for better performance */
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.02); }
+        }
+
+        /* Logo animation - reduced frequency for better performance */
+        .logo-icon {
+            animation: pulse 4s infinite;
+        }
+
+        /* Enhanced button states */
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        /* Loading animation for scan button */
+        .btn-scan.scanning {
+            animation: pulse 1s infinite;
+        }
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown {
+            position: relative;
+        }
+        .profile-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            box-shadow: 0 10px 25px -5px hsl(var(--background) / 0.8);
+            min-width: 200px;
+            z-index: 10000;
+            margin-top: 0.5rem;
+            display: none;
+            backdrop-filter: blur(8px);
+        }
+
+        /* Mobile profile dropdown */
+        @media (max-width: 768px) {
+            .profile-menu {
+                position: fixed;
+                top: 56px;
+                left: 0;
+                right: 0;
+                min-width: auto;
+                margin-top: 0;
+                border-radius: 0;
+                border-top: 1px solid hsl(var(--border));
+                z-index: 10001;
+            }
+            
+            .profile-menu-item {
+                padding: 1rem;
+                font-size: 1rem;
+            }
+        }
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: hsl(var(--foreground));
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border-bottom: 1px solid hsl(var(--border) / 0.5);
+            cursor: pointer;
+        }
+        .profile-menu-item:last-child {
+            border-bottom: none;
+        }
+        .profile-menu-item:hover {
+            background: hsl(var(--muted));
+            color: hsl(var(--primary));
+            transform: translateX(4px);
+        }
+        .profile-menu-item svg {
+            width: 16px;
+            height: 16px;
+            flex-shrink: 0;
+        }
+
+        /* Notification styles */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+        }
+
+        .notification-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .notification-error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .notification-info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        @keyframes slideIn {
+            from { 
+                transform: translateX(100%); 
+                opacity: 0; 
+            }
+            to { 
+                transform: translateX(0); 
+                opacity: 1; 
+            }
+        }
+
+        @keyframes slideOut {
+            from { 
+                transform: translateX(0); 
+                opacity: 1; 
+            }
+            to { 
+                transform: translateX(100%); 
+                opacity: 0; 
+            }
+        }
+
+        /* CORS Warning Notice */
+        .cors-warning {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            border-left: 5px solid #c44569;
+        }
+        
+        .warning-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .warning-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .close-warning {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-left: auto;
+            transition: background 0.3s ease;
+        }
+        
+        .close-warning:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .cors-warning code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+
+
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🛡️</div>
+                    <span class="logo-text">WebShield</span>
+                </div>
+                
+                <nav class="nav" id="mobile-nav">
+                    <a href="index.html">Home</a>
+                    <a href="features.html">Features</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="how-to-install.html">Extension</a>
+                    <a href="about.html">About</a>
+                </nav>
+                
+                <button class="mobile-menu-btn" id="mobile-menu-btn" style="display: none;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+
+                <div class="header-buttons" id="header-actions">
+                    <a href="login.html" class="btn btn-ghost" id="signin-btn">
+                        <span class="icon">🔑</span>
+                        Sign In
+                    </a>
+                    <a href="register.html" class="btn btn-hero" id="getstarted-btn">
+                        <span class="icon">👤</span>
+                        Get Started
+                    </a>
+                    <div id="profile-section" style="display: none;">
+                        <div class="profile-dropdown">
+                            <button class="btn btn-ghost" id="profile-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                    <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
+                                </svg>
+                                <span id="user-name">Profile</span>
+                            </button>
+                            <div class="profile-menu" id="profile-menu" style="display: none;">
+                                <a href="profile.html" class="profile-menu-item">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                        <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
+                                    </svg>
+                                    My Profile
+                                </a>
+                                <a href="#" class="profile-menu-item" id="logout-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                        <polyline points="16,17 21,12 16,7"/>
+                                        <line x1="21" y1="12" x2="9" y2="12"/>
+                                    </svg>
+                                    Sign Out
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="hero" class="hero">
+        <div class="hero-bg"></div>
+        <div class="container">
+            <!-- CORS Warning Notice -->
+            <div class="cors-warning" id="cors-warning" style="display: none;">
+                <div class="warning-content">
+                    <span class="warning-icon">⚠️</span>
+                    <strong>Important:</strong> If you're experiencing "no scan ID generated" issues, 
+                    make sure you're accessing this page through the backend server at 
+                    <code>http://localhost:8000/</code> and not opening the HTML file directly.
+                    <button onclick="this.parentElement.parentElement.style.display='none'" class="close-warning">×</button>
+                </div>
+            </div>
+            
+            <div class="hero-content">
+                <h1>
+                    Protect Your Digital
+                    <span class="hero-gradient">Journey with WebShield</span>
+                </h1>
+                <p>
+                    Real-time protection against malicious websites, phishing scams, and malware. 
+                    Advanced threat detection powered by AI and community intelligence.
+                </p>
+                
+                <div class="scanner-container">
+                    <div class="scanner-form">
+                        <div class="scanner-input-wrapper">
+                            <input 
+                                type="url" 
+                                class="scanner-input"
+                                id="url-input"
+                                placeholder="Enter URL to scan (e.g., https://example.com)"
+                            />
+                            <span class="scanner-icon">🔍</span>
+                        </div>
+                        <button type="button" class="btn btn-scan" id="scan-btn">
+                            <span class="icon">🛡️</span>
+                            Scan URL
+                        </button>
+                        
+                    </div>
+                </div>
+
+                <div class="hero-buttons">
+                    <a href="how-to-install.html" class="btn btn-hero btn-lg">
+                        <span class="icon">🌐</span>
+                        Install Extension
+                    </a>
+                    <a href="dashboard.html" class="btn btn-outline btn-lg">
+                        <span class="icon">📊</span>
+                        View Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <div class="features-header">
+                <h2>Advanced Security Features</h2>
+                <p class="features-desc">
+                    Multi-layered protection using cutting-edge technology to keep you safe online
+                </p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">🗄️</div>
+                        <h3 class="feature-title">VirusTotal Integration</h3>
+                    </div>
+                    <p class="feature-desc">
+                        Leverage 90+ antivirus scanners and URL blocklisting services for comprehensive threat detection.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">⚡</div>
+                        <h3 class="feature-title">Real-Time Scanning</h3>
+                    </div>
+                    <p class="feature-desc">
+                        Instant URL analysis with results in milliseconds. No waiting, just immediate protection.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">👁️</div>
+                        <h3 class="feature-title">Pattern Analysis</h3>
+                    </div>
+                    <p class="feature-desc">
+                        Detect suspicious URL patterns, typosquatting, and malicious redirects using AI algorithms.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">🔒</div>
+                        <h3 class="feature-title">SSL Validation</h3>
+                    </div>
+                    <p class="feature-desc">
+                        Verify certificate authenticity and encryption strength to ensure secure connections.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">📜</div>
+                        <h3 class="feature-title">Scan History</h3>
+                    </div>
+                    <p class="feature-desc">
+                        Track all your scans with detailed reports and historical threat analysis.
+                    </p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-header">
+                        <div class="feature-icon">📊</div>
+                        <h3 class="feature-title">Security Dashboard</h3>
+                    </div>
+                    <p class="feature-desc">
+                        Comprehensive overview of your online security status with actionable insights.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Recent Scans Section (for logged-in users) -->
+    <section id="recent-scans" class="recent-scans" style="display: none;">
+        <div class="container">
+            <div class="recent-scans-header">
+                <h2>Your Recent Scans</h2>
+                <p class="recent-scans-desc">
+                    Track your latest security scans and threat detections
+                </p>
+            </div>
+
+            <div class="recent-scans-grid" id="recent-scans-container">
+                <!-- Recent scans will be loaded here dynamically -->
+            </div>
+
+            <div class="recent-scans-actions">
+                <a href="reports.html" class="btn btn-outline">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3v18h18"/>
+                        <path d="M18.7 8l-5.1 5.1-2.8-2.7L7 14.3"/>
+                    </svg>
+                    View All Reports
+                </a>
+                <a href="dashboard.html" class="btn btn-outline">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3v18h18"/>
+                        <path d="M18.7 8l-5.1 5.1-2.8-2.7L7 14.3"/>
+                        <path d="M3 21h18"/>
+                    </svg>
+                    Go to Dashboard
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Extension CTA -->
+    <section id="extension" class="extension-cta">
+        <div class="container">
+            <div class="extension-content">
+                <div class="extension-icon">🌐</div>
+                
+                <h2>Seamless Browser Protection</h2>
+                <p>
+                    Install our extension for automatic protection while browsing. 
+                    Real-time alerts and one-click threat analysis.
+                </p>
+                
+                <div class="extension-buttons">
+                    <a href="how-to-install.html" class="btn btn-hero btn-lg">
+                        <span class="icon">🌐</span>
+                        Add to Chrome - Free
+                    </a>
+                    <a href="how-to-install.html" class="btn btn-outline btn-lg">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <div class="logo" style="margin-bottom: 1rem;">
+                        <div class="logo-icon">🛡️</div>
+                        <span class="logo-text">WebShield</span>
+                    </div>
+                    <p style="color: hsl(var(--muted-foreground));">
+                        Advanced web security for everyone. Protecting millions of users worldwide.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4>Product</h4>
+                    <ul>
+                        <li><a href="scan-url.html">URL Scanner</a></li>
+                        <li><a href="dashboard.html">Dashboard</a></li>
+                        <li><a href="how-to-install.html">Extension</a></li>
+                        <li><a href="api-settings.html">API Access</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4>Company</h4>
+                    <ul>
+                        <li><a href="about.html">About Us</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Careers</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4>Support</h4>
+                    <ul>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">Security</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-bottom">
+                <p>&copy; 2025 WebShield. All rights reserved. Protecting the web, one URL at a time.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="config.js"></script>
+    <script>
+        // API Configuration - Using config.js for dynamic detection
+        console.log('🔍 Checking API_BASE_URL configuration...');
+        console.log('window.API_BASE_URL:', window.API_BASE_URL);
+        
+        // Fallback if config.js didn't set the API_BASE_URL
+        if (!window.API_BASE_URL) {
+            console.warn('⚠️ window.API_BASE_URL not set by config.js, using fallback');
+            const protocol = window.location.protocol;
+            const hostname = window.location.hostname;
+            const port = window.location.port || (protocol === 'https:' ? '443' : '80');
+            window.API_BASE_URL = `${protocol}//${hostname}:8000/api`;
+            console.log('🔧 Fallback API_BASE_URL:', window.API_BASE_URL);
+        }
+        
+        // Make API_BASE_URL globally accessible
+        window.API_BASE_URL = window.API_BASE_URL;
+        console.log('✅ Final API_BASE_URL:', window.API_BASE_URL);
+        
+        // Global state
+        let currentUser = null;
+        let currentScanId = null;
+        let scanPollingInterval = null;
+        let lastScannedUrl = null; // Track the last scanned URL
+
+        // Utility functions
+        function showNotification(message, type = 'info') {
+            // Remove existing notifications
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(n => n.remove());
+            
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // Validate URL format
+        function isValidUrl(string) {
+            try {
+                const url = new URL(string);
+                return url.protocol === 'http:' || url.protocol === 'https:';
+            } catch (_) {
+                return false;
+            }
+        }
+
+        // URL Scanning function with better error handling
+        async function scanURL(url) {
+            console.log('=== SCAN URL FUNCTION CALLED ===');
+            console.log('Input URL:', url);
+            console.log('API_BASE_URL:', window.API_BASE_URL);
+            
+            // Reset scan state for new scan
+            currentScanId = null;
+            if (scanPollingInterval) {
+                clearInterval(scanPollingInterval);
+                scanPollingInterval = null;
+            }
+            
+            // Add a small delay to prevent race conditions in back-to-back scans
+            await new Promise(resolve => setTimeout(resolve, 100));
+            
+            // Check if we're already scanning this URL
+            if (currentScanId && url === lastScannedUrl) {
+                console.log('⚠️ Already scanning this URL:', url);
+                showNotification('Already scanning this URL. Please wait for results.', 'warning');
+                return;
+            }
+            
+            // Check if we're already scanning any URL
+            if (currentScanId) {
+                console.log('⚠️ Another scan is already in progress. Please wait.');
+                showNotification('Another scan is already in progress. Please wait for it to complete.', 'warning');
+                return;
+            }
+            
+            // Store the URL being scanned
+            lastScannedUrl = url;
+            
+            if (!url) {
+                console.log('❌ No URL provided');
+                showNotification('Please enter a URL to scan', 'error');
+                return;
+            }
+
+            // Add https:// if no protocol is specified
+            if (!url.match(/^https?:\/\//)) {
+                url = 'https://' + url;
+                console.log('🔧 Added https:// to URL:', url);
+            }
+
+            // Validate URL format
+            if (!isValidUrl(url)) {
+                console.log('❌ Invalid URL format:', url);
+                showNotification('Please enter a valid URL (e.g., https://example.com)', 'error');
+                return;
+            }
+
+            console.log('✅ URL validated:', url);
+
+            // Show loading state
+            const scanButton = document.getElementById('scan-btn');
+            const originalText = scanButton.innerHTML;
+            scanButton.innerHTML = '<span class="icon">⏳</span> Scanning...';
+            scanButton.disabled = true;
+            scanButton.classList.add('scanning');
+            
+            // Disable the URL input field as well
+            const urlInput = document.getElementById('url-input');
+            const originalInputState = urlInput.disabled;
+            urlInput.disabled = true;
+
+            try {
+                console.log('🚀 Starting scan for URL:', url);
+                console.log('🌐 API Base URL:', window.API_BASE_URL);
+                console.log('📡 Making API call to:', `${window.API_BASE_URL}/scan`);
+                console.log('🔍 API_BASE_URL type:', typeof window.API_BASE_URL);
+                console.log('🔍 API_BASE_URL value:', window.API_BASE_URL);
+                console.log('🔍 window.API_BASE_URL:', window.API_BASE_URL);
+                console.log('🔍 Global API_BASE_URL:', typeof window.API_BASE_URL !== 'undefined' ? window.API_BASE_URL : 'undefined');
+                
+                // Fallback API URL if API_BASE_URL is not available
+                const apiUrl = window.API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:8000/api`;
+                console.log('🔧 Using API URL:', apiUrl);
+                
+                const response = await fetch(`${apiUrl}/scan`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        url: url,
+                        user_email: localStorage.getItem('userEmail') || null
+                    })
+                });
+
+                console.log('📥 Response received:');
+                console.log('   Status:', response.status);
+                console.log('   OK:', response.ok);
+                console.log('   Headers:', response.headers);
+
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    console.error('❌ Error response:', errorData);
+                    
+                    let errorMessage = 'Failed to start scan';
+                    try {
+                        const parsedError = JSON.parse(errorData);
+                        errorMessage = parsedError.detail || parsedError.message || errorMessage;
+                    } catch (e) {
+                        if (response.status === 404) {
+                            errorMessage = 'API endpoint not found. Please check your backend configuration.';
+                        } else if (response.status >= 500) {
+                            errorMessage = 'Server error. Please try again later.';
+                        }
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+
+                let data;
+                try {
+                    data = await response.json();
+                    console.log('✅ Scan response data:', data);
+                } catch (jsonError) {
+                    console.error('❌ JSON parsing error:', jsonError);
+                    const responseText = await response.text();
+                    console.error('❌ Raw response:', responseText);
+                    throw new Error('Invalid JSON response from server');
+                }
+                
+                console.log('🔍 Checking for scan_id in response...');
+                console.log('  data.scan_id:', data.scan_id);
+                console.log('  data.hasOwnProperty("scan_id"):', data.hasOwnProperty('scan_id'));
+                console.log('  typeof data.scan_id:', typeof data.scan_id);
+                console.log('  data keys:', Object.keys(data));
+                console.log('  Response status:', response.status);
+                console.log('  Response headers:', response.headers);
+                console.log('  Full response data:', JSON.stringify(data, null, 2));
+                console.log('  API URL used:', `${apiUrl}/scan`);
+                console.log('  Request body sent:', JSON.stringify({ 
+                    url: url,
+                    user_email: localStorage.getItem('userEmail') || null
+                }, null, 2));
+                
+                if (data.scan_id) {
+                    currentScanId = data.scan_id;
+                    console.log('🎯 Scan ID received:', currentScanId);
+                    console.log('📊 Initial status:', data.status);
+                    console.log('🔍 Current Scan ID after setting:', currentScanId);
+                    showNotification('Scan started successfully! Analyzing URL...', 'success');
+                    
+                    // Start polling for results
+                    console.log('🔄 Starting to poll for results...');
+                    pollScanResults();
+                } else {
+                    console.error('❌ No scan ID in response');
+                    console.error('❌ Response data:', data);
+                    console.error('❌ Response status:', response.status);
+                    console.error('❌ Response headers:', response.headers);
+                    
+                    let errorMessage = 'Server error - no scan ID received. Please try again.';
+                    if (data.detail) {
+                        errorMessage = data.detail;
+                    } else if (data.message) {
+                        errorMessage = data.message;
+                    } else if (response.status === 500) {
+                        errorMessage = 'Server error. Please try again in a moment.';
+                    } else if (response.status === 400) {
+                        errorMessage = 'Invalid request. Please check the URL and try again.';
+                    }
+                    
+                    throw new Error(errorMessage);
+                }
+            } catch (error) {
+                console.error('❌ Scan error:', error);
+                let errorMessage = 'Network error. Please check your connection and try again.';
+                
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    errorMessage = 'Network connection failed. Please check your internet connection and try again.';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                showNotification(errorMessage, 'error');
+            } finally {
+                // Restore button state
+                scanButton.innerHTML = originalText;
+                scanButton.disabled = false;
+                scanButton.classList.remove('scanning');
+                urlInput.disabled = originalInputState; // Restore original input state
+                console.log('🔄 Button state restored');
+            }
+        }
+
+        function pollScanResults() {
+            if (!currentScanId) {
+                console.error('❌ No scan ID available for polling');
+                showNotification('Scan failed - no scan ID available. Please try again.', 'error');  
+                return;
+            }
+            else{
+                console.log('🔄 Starting to poll for scan results, ID:', currentScanId);
+            }
+
+            // Clear existing interval
+            if (scanPollingInterval) {
+                clearInterval(scanPollingInterval);
+            }
+
+            let pollAttempts = 0;
+            const maxPollAttempts = 30; // 30 attempts * 2 seconds = 60 seconds max
+
+            scanPollingInterval = setInterval(async () => {
+                pollAttempts++;
+                console.log(`📡 Polling attempt ${pollAttempts}/${maxPollAttempts} for scan ID:`, currentScanId);
+                
+                try {
+                    const apiUrl = window.API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:8000/api`;
+                    const response = await fetch(`${apiUrl}/scan/${currentScanId}`);
+                    
+                    console.log('📥 Poll response:');
+                    console.log('   Status:', response.status);
+                    console.log('   OK:', response.ok);
+                    
+                    if (!response.ok) {
+                        console.error('❌ Poll response not ok:', response.status, response.statusText);
+                        if (pollAttempts >= maxPollAttempts) {
+                            clearInterval(scanPollingInterval);
+                            showNotification('Scan timeout. Please try again.', 'error');
+                            resetScanState();
+                        }
+                        return;
+                    }
+
+                    const data = await response.json();
+                    console.log('📊 Poll response data:', data);
+
+                    if (data.status === 'completed') {
+                        console.log('✅ Scan completed!');
+                        console.log('🎯 Current Scan ID:', currentScanId);
+                        console.log('📊 Scan data:', data);
+                        clearInterval(scanPollingInterval);
+                        console.log('🔄 Redirecting to results page...');
+                        showNotification('Scan completed! Redirecting to results...', 'success');
+                        
+                        // Redirect to scan report page
+                        setTimeout(() => {
+                            const redirectUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/scan_report.html?scan_id=${currentScanId}`;
+                            console.log('🚀 Redirecting to:', redirectUrl);
+                            console.log('🔍 Current Scan ID at redirect:', currentScanId);
+                            console.log('🔍 Window location:', window.location.href);
+                            console.log('🔍 Protocol:', window.location.protocol);
+                            console.log('🔍 Hostname:', window.location.hostname);
+                            console.log('🔍 Port:', window.location.port);
+                            console.log('🔍 Full redirect URL:', redirectUrl);
+                            window.location.href = redirectUrl;
+                        }, 1000);
+                    } else if (data.status === 'failed') {
+                        console.error('❌ Scan failed:', data);
+                        clearInterval(scanPollingInterval);
+                        showNotification('Scan failed. Please try again.', 'error');
+                        resetScanState();
+                    } else if (pollAttempts >= maxPollAttempts) {
+                        console.error('❌ Scan timeout after', maxPollAttempts, 'attempts');
+                        clearInterval(scanPollingInterval);
+                        showNotification('Scan timeout. Please try again.', 'error');
+                        resetScanState();
+                    }
+                } catch (error) {
+                    console.error('❌ Poll error:', error);
+                    if (pollAttempts >= maxPollAttempts) {
+                        clearInterval(scanPollingInterval);
+                        showNotification('Network error during polling. Please try again.', 'error');
+                        resetScanState();
+                    }
+                }
+            }, 2000);
+        }
+
+        // Function to reset scan state
+        function resetScanState() {
+            currentScanId = null;
+            lastScannedUrl = null;
+            if (scanPollingInterval) {
+                clearInterval(scanPollingInterval);
+                scanPollingInterval = null;
+            }
+            console.log('🔄 Scan state reset');
+        }
+
+        // Check if user is logged in and update UI accordingly
+        function checkLoginStatus() {
+            const signInBtn = document.getElementById('signin-btn');
+            const getStartedBtn = document.getElementById('getstarted-btn');
+            const profileSection = document.getElementById('profile-section');
+            const userName = document.getElementById('user-name');
+            const recentScansSection = document.getElementById('recent-scans');
+            
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const userEmail = localStorage.getItem('userEmail');
+            const userNameValue = localStorage.getItem('userName');
+            
+            console.log('Login status check:', { isLoggedIn, userEmail, userNameValue });
+            
+            if (isLoggedIn && profileSection) {
+                // User is logged in - show profile section, hide auth buttons
+                profileSection.style.display = 'block';
+                if (signInBtn) signInBtn.style.display = 'none';
+                if (getStartedBtn) getStartedBtn.style.display = 'none';
+                if (userName) userName.textContent = userNameValue || userEmail?.split('@')[0] || 'Profile';
+                console.log('Profile section shown');
+                
+                // Show recent scans section and load user's scans
+                if (recentScansSection) {
+                    recentScansSection.style.display = 'block';
+                    loadUserRecentScans();
+                }
+            } else {
+                // User is not logged in - show auth buttons, hide profile section
+                if (profileSection) profileSection.style.display = 'none';
+                if (signInBtn) signInBtn.style.display = 'inline-flex';
+                if (getStartedBtn) getStartedBtn.style.display = 'inline-flex';
+                console.log('Auth buttons shown');
+                
+                // Hide recent scans section
+                if (recentScansSection) {
+                    recentScansSection.style.display = 'none';
+                }
+            }
+        }
+
+        // Load user's recent scans
+        async function loadUserRecentScans() {
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) return;
+            
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/user_scans?email=${encodeURIComponent(userEmail)}&limit=6`);
+                if (response.ok) {
+                    const scans = await response.json();
+                    displayRecentScans(scans);
+                }
+            } catch (error) {
+                console.error('Failed to load user scans:', error);
+            }
+        }
+
+        // Display recent scans in the grid
+        function displayRecentScans(scans) {
+            const container = document.getElementById('recent-scans-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (scans.length === 0) {
+                container.innerHTML = `
+                    <div class="recent-scan-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 1rem; color: hsl(var(--muted-foreground));">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                        </svg>
+                        <h3 style="margin-bottom: 0.5rem;">No scans yet</h3>
+                        <p style="color: hsl(var(--muted-foreground));">Start by scanning a URL to see your recent scans here.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            scans.forEach(scan => {
+                const card = createRecentScanCard(scan);
+                container.appendChild(card);
+            });
+        }
+
+        // Create a recent scan card element
+        function createRecentScanCard(scan) {
+            const card = document.createElement('div');
+            card.className = 'recent-scan-card';
+
+            // Enhanced threat level display - consider SSL status
+            let statusClass, statusText;
+            if (scan.is_malicious || scan.threat_level === 'high') {
+                statusClass = 'danger';
+                statusText = 'Danger';
+            } else if (scan.threat_level === 'medium') {
+                statusClass = 'warning';
+                statusText = 'Warning';
+            } else {
+                // For low threat, check if SSL is invalid
+                if (scan.ssl_valid === false) {
+                    statusClass = 'warning';
+                    statusText = 'Insecure';
+                } else {
+                    statusClass = 'safe';
+                    statusText = 'Safe';
+                }
+            }
+
+            const scanDate = new Date(scan.created_at).toLocaleDateString();
+
+            card.innerHTML = `
+                <div class="recent-scan-header">
+                    <div class="recent-scan-url" title="${scan.url}">${scan.url}</div>
+                    <div class="recent-scan-status ${statusClass}">${statusText}</div>
+                </div>
+                <div class="recent-scan-details">
+                    <div class="recent-scan-detail">
+                        <div class="recent-scan-detail-label">Scan Date</div>
+                        <div class="recent-scan-detail-value">${scanDate}</div>
+                    </div>
+                    <div class="recent-scan-detail">
+                        <div class="recent-scan-detail-label">Threats</div>
+                        <div class="recent-scan-detail-value">${scan.malicious_count || 0}</div>
+                    </div>
+                </div>
+                <div class="recent-scan-actions">
+                    <a href="/scan_report.html?scan_id=${scan.scan_id}" class="btn btn-outline btn-sm">View Details</a>
+                    <button class="btn btn-outline btn-sm" onclick="downloadReport('${scan.scan_id}')">Download</button>
+                </div>
+            `;
+
+            return card;
+        }
+
+        // Download report function
+        function downloadReport(scanId) {
+            // This would typically open a download dialog
+            // For now, we'll redirect to the scan report page
+            window.open(`/scan_report.html?scan_id=${scanId}`, '_blank');
+        }
+
+        // Setup profile dropdown functionality
+        function setupProfileDropdown() {
+            const profileBtn = document.getElementById('profile-btn');
+            const profileMenu = document.getElementById('profile-menu');
+            const logoutBtn = document.getElementById('logout-btn');
+            const profileLink = document.querySelector('a[href="profile.html"]');
+            
+            console.log('🔧 Profile dropdown setup:', { profileBtn, profileMenu, logoutBtn, profileLink });
+            
+            if (profileBtn && profileMenu) {
+                // Profile button click handler
+                profileBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🎯 Profile button clicked');
+                    
+                    const isVisible = profileMenu.style.display === 'block';
+                    profileMenu.style.display = isVisible ? 'none' : 'block';
+                    
+                    console.log('📋 Menu visibility changed to:', !isVisible);
+                });
+                
+                // Close dropdown when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
+                        profileMenu.style.display = 'none';
+                        console.log('🚪 Closing dropdown - clicked outside');
+                    }
+                });
+                
+                // Prevent dropdown from closing when clicking inside the menu
+                profileMenu.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
+            
+            // Profile link handler
+            if (profileLink) {
+                profileLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('👤 Profile link clicked, redirecting to profile.html');
+                    window.location.href = 'profile.html';
+                });
+            }
+            
+            // Logout button handler
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('🚪 Logout button clicked, clearing localStorage');
+                    
+                    // Clear all localStorage data
+                    localStorage.clear();
+                    
+                    // Close the dropdown
+                    if (profileMenu) {
+                        profileMenu.style.display = 'none';
+                    }
+                    
+                    // Redirect to index page
+                    window.location.href = '/';
+                });
+            }
+        }
+
+        // Mobile menu functionality
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileNav = document.getElementById('mobile-nav');
+            
+            if (mobileMenuBtn && mobileNav) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileNav.classList.toggle('active');
+                });
+                
+                // Close mobile menu when clicking on a link
+                const navLinks = mobileNav.querySelectorAll('a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileNav.classList.remove('active');
+                    });
+                });
+                
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!mobileMenuBtn.contains(e.target) && !mobileNav.contains(e.target)) {
+                        mobileNav.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        // Test function to debug scan ID generation
+        async function testScanIdGeneration() {
+            console.log('🧪 Testing scan ID generation...');
+            try {
+                const testUrl = 'https://example.com';
+                const apiUrl = window.API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:8000/api`;
+                console.log('🔧 Test API URL:', apiUrl);
+                
+                const response = await fetch(`${apiUrl}/scan`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        url: testUrl,
+                        user_email: null
+                    })
+                });
+                
+                console.log('🧪 Test response status:', response.status);
+                console.log('🧪 Test response headers:', response.headers);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('🧪 Test response data:', data);
+                    console.log('🧪 Test scan_id received:', data.scan_id);
+                    console.log('🧪 Test scan_id type:', typeof data.scan_id);
+                    console.log('🧪 Test scan_id length:', data.scan_id ? data.scan_id.length : 0);
+                    
+                    if (data.scan_id) {
+                        showNotification(`Test successful! Scan ID: ${data.scan_id}`, 'success');
+                    } else {
+                        showNotification('Test failed - no scan ID received', 'error');
+                    }
+                } else {
+                    const errorText = await response.text();
+                    console.error('🧪 Test failed:', response.status, errorText);
+                    showNotification(`Test failed: ${response.status}`, 'error');
+                }
+            } catch (error) {
+                console.error('🧪 Test error:', error);
+                showNotification(`Test error: ${error.message}`, 'error');
+            }
+        }
+
+        // Test profile dropdown functionality
+        function testProfileDropdown() {
+            console.log('🧪 Testing profile dropdown functionality...');
+            
+            const profileBtn = document.getElementById('profile-btn');
+            const profileMenu = document.getElementById('profile-menu');
+            const logoutBtn = document.getElementById('logout-btn');
+            const profileLink = document.querySelector('a[href="profile.html"]');
+            
+            console.log('🔍 Profile elements found:', {
+                profileBtn: !!profileBtn,
+                profileMenu: !!profileMenu,
+                logoutBtn: !!logoutBtn,
+                profileLink: !!profileLink
+            });
+            
+            if (profileBtn) {
+                console.log('✅ Profile button found and clickable');
+                // Simulate a click to test
+                profileBtn.click();
+                setTimeout(() => {
+                    const isVisible = profileMenu.style.display === 'block';
+                    console.log('📋 Profile menu visibility after click:', isVisible);
+                }, 100);
+            }
+            
+            if (logoutBtn) {
+                console.log('✅ Logout button found');
+            }
+            
+            if (profileLink) {
+                console.log('✅ Profile link found');
+            }
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== DOM LOADED - INITIALIZING WEBSHIELD ===');
+            console.log('🌐 API_BASE_URL:', window.API_BASE_URL);
+            console.log('🌍 Current hostname:', window.location.hostname);
+            console.log('🔗 Current URL:', window.location.href);
+            console.log('📡 Protocol:', window.location.protocol);
+            console.log('🚪 Port:', window.location.port);
+            
+            // URL Scanner
+            const scannerInput = document.getElementById('url-input');
+            const scanButton = document.getElementById('scan-btn');
+
+            console.log('🔍 Found elements:');
+            console.log('   Scanner Input:', scannerInput ? '✅ Found' : '❌ Not found');
+            console.log('   Scan Button:', scanButton ? '✅ Found' : '❌ Not found');
+
+            if (scanButton) {
+                console.log('🎯 Adding click event listener to scan button');
+                scanButton.addEventListener('click', () => {
+                    const url = scannerInput.value.trim();
+                    console.log('🖱️ Scan button clicked!');
+                    console.log('📝 Input value:', url);
+                    console.log('🌐 Current hostname:', window.location.hostname);
+                    scanURL(url);
+                });
+            }
+
+            if (scannerInput) {
+                console.log('⌨️ Adding keypress event listener to scanner input');
+                scannerInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        const url = scannerInput.value.trim();
+                        console.log('↵ Enter pressed!');
+                        console.log('📝 Input value:', url);
+                        scanURL(url);
+                    }
+                });
+            }
+
+            // Check if user is logged in and setup profile dropdown
+            checkLoginStatus();
+            setupProfileDropdown();
+            setupMobileMenu();
+
+            // Test API connectivity
+            console.log('🔌 Testing API connectivity...');
+            fetch(`${window.API_BASE_URL}/health`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('✅ API connectivity test successful:', data);
+                })
+                .catch(error => {
+                    console.error('❌ API connectivity test failed:', error);
+                    console.log('🌐 This might be a network access issue');
+                });
+
+            console.log('✅ WebShield initialization complete');
+            
+            // Test profile dropdown functionality
+            setTimeout(() => {
+                testProfileDropdown();
+            }, 2000);
+        });
+
+        // Handle page visibility change to stop polling when page is hidden
+        document.addEventListener('visibilitychange', function() {
+            if (document.hidden && scanPollingInterval) {
+                console.log('Page hidden, stopping scan polling');
+                clearInterval(scanPollingInterval);
+            }
+        });
+
+        // Auto-run config.js test on load
+        if (typeof window !== 'undefined') {
+            setTimeout(() => {
+                testScanIdGeneration();
+            }, 1000);
+        }
+        
+        // Detect if page is accessed directly and show CORS warning
+        function checkPageAccess() {
+            const isDirectAccess = window.location.protocol === 'file:';
+            const corsWarning = document.getElementById('cors-warning');
+            
+            if (isDirectAccess && corsWarning) {
+                corsWarning.style.display = 'block';
+                console.warn('⚠️ Page accessed directly via file:// protocol. This will cause CORS issues with scan ID generation.');
+                console.warn('💡 Please access this page through the backend server at http://localhost:8000/');
+            }
+        }
+        
+        // Check page access when DOM is loaded
+        document.addEventListener('DOMContentLoaded', checkPageAccess);
+    </script>
+</body>
+</html>

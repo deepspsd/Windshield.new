@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Scan Report - WebShield</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --background: 220 25% 3%;
+            --foreground: 220 25% 98%;
+            --card: 220 25% 5%;
+            --card-foreground: 220 25% 98%;
+            --primary: 210 100% 60%;
+            --primary-foreground: 220 25% 98%;
+            --secondary: 250 25% 15%;
+            --secondary-foreground: 220 25% 98%;
+            --muted: 220 25% 12%;
+            --muted-foreground: 220 25% 70%;
+            --accent: 160 84% 45%;
+            --accent-foreground: 220 25% 98%;
+            --success: 160 84% 45%;
+            --warning: 45 93% 47%;
+            --destructive: 0 84% 60%;
+            --destructive-foreground: 220 25% 98%;
+            --border: 220 25% 15%;
+            --ring: 210 100% 60%;
+            --radius: 0.75rem;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.6;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1rem;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 2rem;
+            box-shadow: 0 20px 40px -10px hsl(var(--primary) / 0.1);
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, hsl(210 100% 60%), hsl(160 84% 45%));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, hsl(210 100% 60%), hsl(160 84% 45%));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-safe {
+            background: hsl(var(--success) / 0.1);
+            color: hsl(var(--success));
+            border: 1px solid hsl(var(--success) / 0.3);
+        }
+
+        .status-warning {
+            background: hsl(var(--warning) / 0.1);
+            color: hsl(var(--warning));
+            border: 1px solid hsl(var(--warning) / 0.3);
+        }
+
+        .status-danger {
+            background: hsl(var(--destructive) / 0.1);
+            color: hsl(var(--destructive));
+            border: 1px solid hsl(var(--destructive) / 0.3);
+        }
+
+        .url-display {
+            background: hsl(var(--muted));
+            padding: 1rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            border: 1px solid hsl(var(--border));
+        }
+
+        .url-label {
+            font-weight: 500;
+            color: hsl(var(--muted-foreground));
+            margin-bottom: 0.5rem;
+        }
+
+        .url-value {
+            font-family: monospace;
+            color: hsl(var(--primary));
+            word-break: break-all;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .analysis-section {
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: hsl(var(--accent));
+        }
+
+        .analysis-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .analysis-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid hsl(var(--border) / 0.3);
+        }
+
+        .analysis-item:last-child {
+            border-bottom: none;
+        }
+
+        .analysis-label {
+            font-weight: 500;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .analysis-value {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+        }
+
+        .loading-container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .loading-text {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: hsl(var(--primary));
+            margin-bottom: 0.5rem;
+        }
+
+        .loading-subtext {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+        }
+
+        .error-message {
+            background: hsl(var(--destructive) / 0.1);
+            color: hsl(var(--destructive));
+            border: 1px solid hsl(var(--destructive) / 0.3);
+            padding: 1rem;
+            border-radius: var(--radius);
+            text-align: center;
+            margin: 1rem 0;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: linear-gradient(135deg, hsl(210 100% 60%), hsl(250 100% 60%));
+            color: white;
+            text-decoration: none;
+            border-radius: 0.75rem;
+            font-weight: 600;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 14px 0 hsl(210 100% 60% / 0.25);
+        }
+
+        .back-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(210 100% 60% / 0.4);
+        }
+
+        .back-button:focus-visible {
+            outline: 2px solid hsl(210 100% 60%);
+            outline-offset: 2px;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 1rem 0.5rem;
+                align-items: flex-start;
+            }
+            
+            .container {
+                padding: 1.5rem 1rem;
+                margin: 0;
+                border-radius: 0;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .title {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Content will be loaded dynamically -->
+    </div>
+
+    <script src="config.js"></script>
+    <script>
+        // Simple function to get scan ID from URL
+        function getScanId() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('scan_id');
+        }
+        
+        // Main function to load scan results
+        function loadScanResult() {
+            const scanId = getScanId();
+            const container = document.querySelector('.container');
+            
+            console.log('Loading scan result for ID:', scanId);
+            
+            if (!container) {
+                console.error('Container element not found!');
+                return;
+            }
+            
+            // Ensure API_BASE_URL is available
+            if (!window.API_BASE_URL) {
+                console.warn('API_BASE_URL not found, using fallback');
+                window.API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+            }
+            
+            if (!scanId) {
+                container.innerHTML = `
+                    <div class="header">
+                        <div class="logo-icon">🛡️</div>
+                        <div class="logo-text">WebShield</div>
+                    </div>
+                    <h1 class="title">📝 Scan Report</h1>
+                    <div class="error-message">
+                        ❌ No scan ID provided.
+                    </div>
+                    <div style="text-align: center; margin-top: 2rem;">
+                        <a href="index.html" class="back-button">← Back to Home Page</a>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Show loading state
+            container.innerHTML = `
+                <div class="header">
+                    <div class="logo-icon">🛡️</div>
+                    <div class="logo-text">WebShield</div>
+                </div>
+                <h1 class="title">📝 Scan Report</h1>
+                <div class="loading-container">
+                    <div class="loading-text">⚡ Loading scan result...</div>
+                    <div class="loading-subtext">Please wait</div>
+                </div>
+            `;
+            
+            // Make API call
+            const apiUrl = `${window.API_BASE_URL}/scan/${scanId}`;
+            console.log('Making API call to:', apiUrl);
+            
+            fetch(apiUrl)
+                .then(res => {
+                    if (!res.ok) {
+                        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+                    }
+                    return res.json();
+                })
+                .then(data => {
+                    console.log('API Response:', data);
+                    
+                    if (data.status === 'completed' && data.results) {
+                        displayResults(data.results);
+                    } else {
+                        throw new Error(`Unexpected scan status: ${data.status}`);
+                    }
+                })
+                .catch(err => {
+                    console.error('Error loading scan result:', err);
+                    container.innerHTML = `
+                        <div class="header">
+                            <div class="logo-icon">🛡️</div>
+                            <div class="logo-text">WebShield</div>
+                        </div>
+                        <h1 class="title">📝 Scan Report</h1>
+                        <div class="error-message">
+                            ❌ ${err.message}
+                        </div>
+                        <div style="text-align: center; margin-top: 2rem;">
+                            <a href="index.html" class="back-button">← Back to Home Page</a>
+                        </div>
+                    `;
+                });
+        }
+        
+        // Function to display scan results
+        function displayResults(result) {
+            const container = document.querySelector('.container');
+            
+            if (!container) {
+                console.error('Container not found in displayResults');
+                return;
+            }
+            
+            // Handle boolean/integer values safely
+            const isMalicious = result.is_malicious === true || result.is_malicious === 1;
+            const safe = !isMalicious;
+            const statusClass = safe ? 'status-safe' : result.threat_level === 'high' ? 'status-danger' : 'status-warning';
+            
+            // Safely extract nested objects with fallbacks
+            const details = result.detection_details || {};
+            const urlAnalysis = details.url_analysis || {};
+            const sslAnalysis = details.ssl_analysis || {};
+            const contentAnalysis = details.content_analysis || {};
+            const mlUsed = (urlAnalysis.ml_enabled === true || urlAnalysis.ml_enabled === 1) || (contentAnalysis.ml_enabled === true || contentAnalysis.ml_enabled === 1);
+            const sslHasError = !!(sslAnalysis && (sslAnalysis.error));
+            const sslValidText = sslHasError ? 'Unknown' : ((result.ssl_valid === true || result.ssl_valid === 1) ? 'Valid' : 'Invalid');
+            const vtAnalysis = details.virustotal_analysis || {};
+            
+            // Build the HTML content
+            const html = `
+                <div class="header">
+                    <div class="logo-icon">🛡️</div>
+                    <div class="logo-text">WebShield</div>
+                </div>
+                
+                <h1 class="title">📝 Scan Report</h1>
+                
+                <div class="status-badge ${statusClass}">
+                    ${safe ? '✅ Low Risk 🟢' : result.threat_level === 'medium' ? '⚠️ Medium Risk 🟡' : '❌ High Risk 🔴'}
+                </div>
+                
+                <div class="url-display">
+                    <div class="url-label">URL:</div>
+                    <div class="url-value">${result.url || 'Unknown URL'}</div>
+                </div>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${result.malicious_count || 0}</div>
+                        <div class="stat-label">Malicious Detections</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${result.suspicious_count || 0}</div>
+                        <div class="stat-label">Suspicious Detections</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${result.total_engines || 0}</div>
+                        <div class="stat-label">Total Engines</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${sslValidText}</div>
+                        <div class="stat-label">SSL Certificate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${mlUsed ? 'Yes' : 'No'}</div>
+                        <div class="stat-label">ML Used</div>
+                    </div>
+                </div>
+
+                <div class="analysis-section">
+                    <h2 class="section-title">🔗 URL Analysis</h2>
+                    <div class="analysis-card">
+                        <div class="analysis-item">
+                            <span class="analysis-label">Domain:</span>
+                            <span class="analysis-value">${urlAnalysis.domain || 'N/A'}</span>
+                        </div>
+                        <div class="analysis-item">
+                            <span class="analysis-label">Suspicious Score:</span>
+                            <span class="analysis-value">${urlAnalysis.suspicious_score !== undefined ? urlAnalysis.suspicious_score : 'N/A'}</span>
+                        </div>
+                        <div class="analysis-item">
+                            <span class="analysis-label">Suspicious:</span>
+                            <span class="analysis-value">${(urlAnalysis.is_suspicious === true || urlAnalysis.is_suspicious === 1) ? 'Yes' : 'No'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-section">
+                    <h2 class="section-title">🔒 SSL Certificate Analysis</h2>
+                    <div class="analysis-card">
+                        <div class="analysis-item">
+                            <span class="analysis-label">Certificate Valid:</span>
+                            <span class="analysis-value">${
+                                (sslAnalysis.valid === true || sslAnalysis.valid === 1) ? 'Yes'
+                                : (sslAnalysis.valid === false || sslAnalysis.valid === 0) ? 'No'
+                                : (sslAnalysis.valid !== undefined ? sslAnalysis.valid : 'N/A')
+                            }</span>
+                        </div>
+                        ${sslHasError && sslAnalysis.error ? `
+                            <div class="analysis-item">
+                                <span class="analysis-label">Error:</span>
+                                <span class="analysis-value">${sslAnalysis.error}</span>
+                            </div>
+                        ` : ''}
+                        ${sslAnalysis.threat_score !== undefined ? `
+                            <div class="analysis-item">
+                                <span class="analysis-label">SSL Threat Score:</span>
+                                <span class="analysis-value">${sslAnalysis.threat_score}</span>
+                            </div>
+                        ` : ''}
+                        <div class="analysis-item">
+                            <span class="analysis-label">Issuer:</span>
+                            <span class="analysis-value">${
+                                sslAnalysis.issuer !== undefined && sslAnalysis.issuer !== null && sslAnalysis.issuer !== ''
+                                    ? sslAnalysis.issuer
+                                    : (sslHasError ? 'N/A' : 'Unknown')
+                            }</span>
+                        </div>
+                        <div class="analysis-item">
+                            <span class="analysis-label">Valid Until:</span>
+                            <span class="analysis-value">${
+                                sslAnalysis.expires !== undefined && sslAnalysis.expires !== null && sslAnalysis.expires !== ''
+                                    ? sslAnalysis.expires
+                                    : (sslHasError ? 'N/A' : 'Unknown')
+                            }</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="analysis-section">
+                    <h2 class="section-title">📄 Content Analysis</h2>
+                    <div class="analysis-card">
+                        <div class="analysis-item">
+                            <span class="analysis-label">Phishing Score:</span>
+                            <span class="analysis-value">${contentAnalysis.phishing_score || 'N/A'}</span>
+                        </div>
+                        <div class="analysis-item">
+                            <span class="analysis-label">Suspicious:</span>
+                            <span class="analysis-value">${(contentAnalysis.is_suspicious === true || contentAnalysis.is_suspicious === 1) ? 'Yes' : 'No'}</span>
+                        </div>
+                        <div class="analysis-item">
+                            <span class="analysis-label">Content Length:</span>
+                            <span class="analysis-value">${contentAnalysis.content_length || 'N/A'}</span>
+                        </div>
+                        ${mlUsed !== undefined ? `
+                            <div class="analysis-item">
+                                <span class="analysis-label">ML Used (URL/Content):</span>
+                                <span class="analysis-value">${mlUsed ? 'Yes' : 'No'}</span>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+
+                <div class="analysis-section">
+                    <h2 class="section-title">🦠 VirusTotal Analysis</h2>
+                    <div class="analysis-card">
+                        ${vtAnalysis.malicious_count !== undefined ? `
+                            <div class="analysis-item">
+                                <span class="analysis-label">Malicious:</span>
+                                <span class="analysis-value">${vtAnalysis.malicious_count || 0}</span>
+                            </div>
+                            <div class="analysis-item">
+                                <span class="analysis-label">Suspicious:</span>
+                                <span class="analysis-value">${vtAnalysis.suspicious_count || 0}</span>
+                            </div>
+                            <div class="analysis-item">
+                                <span class="analysis-label">Total Engines:</span>
+                                <span class="analysis-value">${vtAnalysis.total_engines || 0}</span>
+                            </div>
+                            ${vtAnalysis.harmless_count !== undefined ? `
+                                <div class="analysis-item">
+                                    <span class="analysis-label">Harmless:</span>
+                                    <span class="analysis-value">${vtAnalysis.harmless_count || 0}</span>
+                                </div>
+                            ` : ''}
+                            ${vtAnalysis.cached !== undefined ? `
+                                <div class="analysis-item">
+                                    <span class="analysis-label">Cache Status:</span>
+                                    <span class="analysis-value">${(vtAnalysis.cached === true || vtAnalysis.cached === 1) ? 'Cached' : 'Fresh Scan'}</span>
+                                </div>
+                            ` : ''}
+                        ` : `
+                            <div class="analysis-item">
+                                <span class="analysis-label">Status:</span>
+                                <span class="analysis-value">No data available</span>
+                            </div>
+                        `}
+                    </div>
+                </div>
+
+                <div style="text-align: center; margin-top: 2rem;">
+                    <a href="index.html" class="back-button">← Back to Home Page</a>
+                </div>
+            `;
+            
+            // Set the HTML content
+            container.innerHTML = html;
+        }
+        
+        // Load scan result when page loads
+        window.addEventListener('load', loadScanResult);
+    </script>
+</body>
+</html>

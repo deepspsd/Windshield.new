@@ -1,0 +1,1619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scan URL - WebShield</title>
+
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="config.js"></script>
+    <style>
+        :root {
+            /* Color System */
+            --primary: 220 95% 55%;
+            --primary-glow: 220 90% 65%;
+            --primary-variant: 230 85% 45%;
+            --secondary: 240 5% 15%;
+            --accent: 45 100% 55%;
+            --success: 142 76% 36%;
+            --destructive: 0 72% 51%;
+            --warning: 38 92% 50%;
+            
+            /* Background Colors */
+            --background: 224 71% 4%;
+            --surface: 224 71% 6%;
+            --card: 224 71% 8%;
+            --muted: 215 27% 17%;
+            --border: 215 27% 20%;
+            
+            /* Text Colors */
+            --foreground: 213 31% 91%;
+            --muted-foreground: 215 20% 65%;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+            --gradient-cyber: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-variant)) 50%, hsl(var(--accent)) 100%);
+            --hero-gradient: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--surface)) 50%, hsl(var(--card)) 100%);
+            
+            /* Effects */
+            --glow: 0 0 30px hsl(var(--primary) / 0.3);
+            --glow-strong: 0 0 50px hsl(var(--primary) / 0.5);
+            --shadow-elegant: 0 10px 40px -10px hsl(var(--primary) / 0.2);
+            --border-glow: 0 0 20px hsl(var(--primary) / 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header styles */
+        .header {
+            border-bottom: 1px solid hsl(var(--border) / 0.5);
+            background-color: hsl(var(--card) / 0.5);
+            backdrop-filter: blur(8px);
+        }
+
+        .header-content {
+            height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, hsl(210 100% 60%), hsl(160 84% 45%));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, hsl(210 100% 60%), hsl(160 84% 45%));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav a {
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.3s;
+        }
+
+        .nav a:hover {
+            color: hsl(var(--primary));
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: hsl(var(--foreground));
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: background 0.3s;
+        }
+
+        .mobile-menu-btn:hover {
+            background: hsl(var(--muted));
+        }
+
+        /* Mobile header adjustments */
+        @media (max-width: 768px) {
+            .header-content {
+                height: 56px;
+                padding: 0 0.5rem;
+            }
+            
+            .nav {
+                display: none;
+            }
+            
+            .mobile-menu-btn {
+                display: flex !important;
+            }
+            
+            .header-actions {
+                gap: 0.5rem;
+            }
+        }
+
+
+
+        /* Buttons */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid hsl(var(--ring));
+            outline-offset: 2px;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 14px 0 hsl(var(--primary) / 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--primary) / 0.4);
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, hsl(var(--success)), hsl(var(--primary)));
+            color: white;
+            box-shadow: 0 4px 14px 0 hsl(var(--success) / 0.25);
+            font-size: 0.8rem;
+            padding: 0.5rem 1rem;
+        }
+
+        .btn-download:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--success) / 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: hsl(var(--foreground));
+            border: 2px solid hsl(var(--border));
+        }
+
+        .btn-outline:hover {
+            background: hsl(var(--muted) / 0.5);
+            border-color: hsl(var(--primary));
+            color: hsl(var(--primary));
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: hsl(var(--foreground));
+            border: 1px solid transparent;
+        }
+
+        .btn-ghost:hover {
+            background: hsl(var(--muted) / 0.5);
+            border-color: hsl(var(--border));
+        }
+
+        .btn-hero {
+            background: var(--gradient-primary);
+            color: white;
+            border: 1px solid transparent;
+            box-shadow: 0 4px 14px 0 hsl(var(--primary) / 0.25);
+        }
+
+        .btn-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--primary) / 0.4);
+        }
+
+        .btn-hero:hover::before {
+            left: 100%;
+        }
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            box-shadow: 0 10px 25px -5px hsl(var(--background) / 0.8);
+            min-width: 200px;
+            z-index: 1000;
+            margin-top: 0.5rem;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: hsl(var(--foreground));
+            text-decoration: none;
+            transition: background 0.2s;
+            border-bottom: 1px solid hsl(var(--border) / 0.5);
+        }
+
+        .profile-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-menu-item:hover {
+            background: hsl(var(--surface));
+            color: hsl(var(--primary));
+        }
+
+        .profile-menu-item svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown {
+            position: relative;
+        }
+
+        .profile-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            box-shadow: 0 10px 25px -5px hsl(var(--background) / 0.8);
+            min-width: 200px;
+            z-index: 1000;
+            margin-top: 0.5rem;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: hsl(var(--foreground));
+            text-decoration: none;
+            transition: background 0.2s;
+            border-bottom: 1px solid hsl(var(--border) / 0.5);
+        }
+
+        .profile-menu-item:last-child {
+            border-bottom: none;
+        }
+
+        .profile-menu-item:hover {
+            background: hsl(var(--surface));
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+            min-height: calc(100vh - 80px);
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: var(--gradient-cyber);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .page-subtitle {
+            color: hsl(var(--muted-foreground));
+            font-size: 1.125rem;
+        }
+
+        /* Scan Form */
+        .scan-form-container {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: var(--shadow-elegant);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .scan-form {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            font-size: 0.875rem;
+        }
+
+        .form-input {
+            padding: 0.75rem 1rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            background: hsl(var(--surface));
+            color: hsl(var(--foreground));
+            font-size: 1rem;
+            transition: border-color 0.2s;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 3px hsl(var(--primary) / 0.1);
+        }
+
+        .form-input::placeholder {
+            color: hsl(var(--muted-foreground));
+        }
+
+        .scan-button {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: var(--glow);
+        }
+
+        .scan-button:hover {
+            box-shadow: var(--glow-strong);
+            transform: translateY(-2px);
+        }
+
+        .scan-button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Loading State */
+        .loading {
+            display: none;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid hsl(var(--border));
+            border-top: 2px solid hsl(var(--primary));
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Info Section */
+        .info-section {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: hsl(var(--surface));
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+        }
+
+        .info-title {
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin-bottom: 0px;
+        }
+
+        .info-text {
+            color: hsl(var(--muted-foreground));
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+.footer {
+    background: hsl(var(--surface) / 0.8);
+    padding: 0.5rem 0;
+    text-align: center;
+    font-size: 1rem;
+    color: hsl(var(--muted-foreground));
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+        /* Recent Scans Section */
+        .recent-scans-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            box-shadow: var(--shadow-elegant);
+        }
+
+        .section-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            background: var(--gradient-cyber);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: hsl(var(--muted-foreground));
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .recent-scans-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .scan-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: hsl(var(--surface));
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .scan-item:hover {
+            background: hsl(var(--muted));
+        }
+
+        .scan-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .scan-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .scan-details h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.25rem;
+        }
+
+        .scan-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .scan-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .badge-safe {
+            background: hsl(var(--success));
+        }
+
+        .badge-warning {
+            background: hsl(var(--warning));
+        }
+
+        .badge-danger {
+            background: hsl(var(--destructive));
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.5rem;
+        }
+
+        .empty-desc {
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* Recent Scans Section */
+        .recent-scans-section {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            box-shadow: var(--shadow-elegant);
+        }
+
+        .section-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            background: var(--gradient-cyber);
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .section-subtitle {
+            color: hsl(var(--muted-foreground));
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .recent-scans-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .scan-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            background: hsl(var(--surface));
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .scan-item:hover {
+            background: hsl(var(--muted));
+        }
+
+        .scan-info {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .scan-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--accent)));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .scan-details h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.25rem;
+        }
+
+        .scan-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.75rem;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .scan-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .badge {
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white;
+        }
+
+        .badge-safe {
+            background: hsl(var(--success));
+        }
+
+        .badge-warning {
+            background: hsl(var(--warning));
+        }
+
+        .badge-danger {
+            background: hsl(var(--destructive));
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0.75rem 0;
+            }
+            
+            .nav {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .scan-form-container {
+                padding: 1.5rem;
+            }
+
+            .recent-scans-section {
+                padding: 1rem;
+            }
+
+            .scan-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.75rem;
+            }
+
+            .scan-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+            
+            .page-title {
+                font-size: 1.75rem;
+            }
+            
+            .scan-form-container {
+                padding: 1rem;
+            }
+        }
+
+        /* Notification System */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 500;
+            z-index: 1000;
+            animation: slideIn 0.3s ease;
+            max-width: 400px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .notification-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+        }
+
+        .notification-error {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+        }
+
+        .notification-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+        }
+
+        .notification-info {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        /* CORS Warning Notice */
+        .cors-warning {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            border-left: 5px solid #c44569;
+        }
+        
+        .warning-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+        }
+        
+        .warning-icon {
+            font-size: 24px;
+            flex-shrink: 0;
+        }
+        
+        .close-warning {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-left: auto;
+            transition: background 0.3s ease;
+        }
+        
+        .close-warning:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .cors-warning code {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">🛡️</div>
+                    <span class="logo-text">WebShield</span>
+                </div>
+                
+                <nav class="nav" id="mobile-nav">
+                    <a href="index.html">Home</a>
+                    <a href="features.html">Features</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="how-to-install.html">Extension</a>
+                    <a href="about.html">About</a>
+                </nav>
+                
+                <div class="header-actions" id="header-actions">
+                    <a href="login.html" class="btn btn-ghost" id="signin-btn">
+                        <span class="icon">🔑</span>
+                        Sign In
+                    </a>
+                    <a href="register.html" class="btn btn-hero" id="getstarted-btn">
+                        <span class="icon">👤</span>
+                        Get Started
+                    </a>
+                    <div id="profile-section" style="display: none;">
+                        <div class="profile-dropdown">
+                            <button class="btn btn-ghost" id="profile-btn">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <circle cx="12" cy="10" r="3"/>
+                                    <path d="M7 20.662V19a2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
+                                </svg>
+                                <span id="user-name">Profile</span>
+                            </button>
+                            <div class="profile-menu" id="profile-menu" style="display: none;">
+                                <a href="profile.html" class="profile-menu-item">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <circle cx="12" cy="10" r="3"/>
+                                        <path d="M7 20.662V19a2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
+                                    </svg>
+                                    My Profile
+                                </a>
+                                <a href="#" class="profile-menu-item" id="logout-btn">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                        <polyline points="16,17 21,12 16,7"/>
+                                        <line x1="21" y1="12" x2="9" y2="12"/>
+                                    </svg>
+                                    Sign Out
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="mobile-menu-btn" id="mobile-menu-btn" style="display: none;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+
+
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Scan URL</h1>
+                <p class="page-subtitle">Enter a URL to scan for security threats and vulnerabilities</p>
+            </div>
+
+            <!-- CORS Warning Notice -->
+            <div class="cors-warning" id="cors-warning" style="display: none;">
+                <div class="warning-content">
+                    <span class="warning-icon">⚠️</span>
+                    <strong>Important:</strong> If you're experiencing "no scan ID generated" issues, 
+                    make sure you're accessing this page through the backend server at 
+                    <code>http://localhost:8000/</code> and not opening the HTML file directly.
+                    <button onclick="this.parentElement.parentElement.style.display='none'" class="close-warning">×</button>
+                </div>
+            </div>
+
+                <!-- Scan Form -->
+                <div class="scan-form-container">
+                    <form class="scan-form" id="scan-form">
+                        <div class="form-group">
+                            <label for="url-input" class="form-label">URL to Scan</label>
+                            <input 
+                                type="text" 
+                                id="url-input" 
+                                class="form-input" 
+                                placeholder="example.com or https://example.com"
+                            />
+                        </div>
+                        
+                        <button type="submit" class="scan-button" id="scan-button">
+                            <span class="scan-text">🛡️ Scan URL</span>
+                            <div class="loading" id="loading">
+                                <div class="spinner"></div>
+                                <span>Scanning...</span>
+                            </div>
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Info Section -->
+                <div class="info-section">
+                    <h3 class="info-title">How it works</h3>
+                    <p class="info-text">
+                        Our advanced security scanner analyzes URLs for malicious content, phishing attempts, 
+                        malware distribution, and other security threats. The scan checks multiple security 
+                        databases and uses AI-powered analysis to provide comprehensive protection.
+                    </p>
+                </div>
+
+                <!-- Recent Scans Section -->
+                <div class="recent-scans-section" id="recent-scans-section" style="display: none;">
+                    <h3 class="section-title">Recent Scan Reports</h3>
+                    <p class="section-subtitle">Your latest security scan results</p>
+                    <div class="recent-scans-container" id="recent-scans-container">
+                        <!-- Recent scans will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <script>
+            // Global state for scan management
+            let currentScanId = null;
+            let scanPollingInterval = null;
+            let lastScannedUrl = null;
+
+            // Utility functions
+            function showNotification(message, type = 'info') {
+                // Remove existing notifications
+                const existingNotifications = document.querySelectorAll('.notification');
+                existingNotifications.forEach(n => n.remove());
+                
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                notification.textContent = message;
+                
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.style.animation = 'slideOut 0.3s ease';
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            }
+
+            // Check login status and update UI accordingly
+            function checkLoginStatus() {
+                const signInBtn = document.getElementById('signin-btn');
+                const getStartedBtn = document.getElementById('getstarted-btn');
+                const profileSection = document.getElementById('profile-section');
+                const userName = document.getElementById('user-name');
+                
+                // Check if user is logged in
+                const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+                const userEmail = localStorage.getItem('userEmail');
+                const userNameValue = localStorage.getItem('userName');
+                
+                console.log('Login status check:', { isLoggedIn, userEmail, userNameValue });
+                
+                if (isLoggedIn && profileSection) {
+                    // User is logged in - show profile section, hide auth buttons
+                    profileSection.style.display = 'block';
+                    if (signInBtn) signInBtn.style.display = 'none';
+                    if (getStartedBtn) getStartedBtn.style.display = 'none';
+                    if (userName) userName.textContent = userNameValue || userEmail?.split('@')[0] || 'Profile';
+                    console.log('Profile section shown');
+                } else {
+                    // User is not logged in - show auth buttons, hide profile section
+                    if (profileSection) profileSection.style.display = 'none';
+                    if (signInBtn) signInBtn.style.display = 'inline-flex';
+                    if (getStartedBtn) getStartedBtn.style.display = 'inline-flex';
+                    console.log('Auth buttons shown');
+                }
+            }
+
+            // Setup profile dropdown functionality
+            function setupProfileDropdown() {
+                const profileBtn = document.getElementById('profile-btn');
+                const profileMenu = document.getElementById('profile-menu');
+                const logoutBtn = document.getElementById('logout-btn');
+                const profileLink = document.querySelector('a[href="profile.html"]');
+                
+                console.log('Profile dropdown setup:', { profileBtn, profileMenu, logoutBtn, profileLink });
+                
+                if (profileBtn && profileMenu) {
+                    profileBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        const isVisible = profileMenu.style.display === 'block';
+                        profileMenu.style.display = isVisible ? 'none' : 'block';
+                        console.log('Profile button clicked, menu visibility:', !isVisible);
+                    });
+                    
+                    // Close dropdown when clicking outside
+                    document.addEventListener('click', (e) => {
+                        if (!profileBtn.contains(e.target) && !profileMenu.contains(e.target)) {
+                            profileMenu.style.display = 'none';
+                        }
+                    });
+                }
+                
+                // Ensure profile link works correctly
+                if (profileLink) {
+                    profileLink.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Profile link clicked, redirecting to profile.html');
+                        window.location.href = 'profile.html';
+                    });
+                }
+                
+                if (logoutBtn) {
+                    logoutBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        console.log('Logout button clicked, clearing localStorage');
+                        // Clear all localStorage data
+                        localStorage.clear();
+                        // Redirect to index page
+                        window.location.href = '/';
+                    });
+                }
+            }
+
+            // URL validation function
+            function isValidUrl(string) {
+                try {
+                    const url = new URL(string);
+                    return url.protocol === 'http:' || url.protocol === 'https:';
+                } catch (_) {
+                    return false;
+                }
+            }
+
+            // Scan form functionality
+            function setupScanForm() {
+                const form = document.getElementById('scan-form');
+                const urlInput = document.getElementById('url-input');
+                const scanButton = document.getElementById('scan-button');
+                const scanText = document.querySelector('.scan-text');
+                const loading = document.getElementById('loading');
+
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    
+                    let url = urlInput.value.trim();
+                    if (!url) {
+                        showNotification('Please enter a URL to scan', 'error');
+                        return;
+                    }
+
+                    // Add https:// if no protocol is specified
+                    if (!url.match(/^https?:\/\//)) {
+                        url = 'https://' + url;
+                        console.log('🔧 Added https:// to URL:', url);
+                    }
+
+                    // Validate URL format
+                    if (!isValidUrl(url)) {
+                        showNotification('Please enter a valid URL (e.g., https://example.com)', 'error');
+                        return;
+                    }
+
+                    // Check if we're already scanning this URL
+                    if (currentScanId && url === lastScannedUrl) {
+                        console.log('⚠️ Already scanning this URL:', url);
+                        showNotification('Already scanning this URL. Please wait for results.', 'warning');
+                        return;
+                    }
+                    
+                    // Check if we're already scanning any URL
+                    if (currentScanId) {
+                        console.log('⚠️ Another scan is already in progress. Please wait.');
+                        showNotification('Another scan is already in progress. Please wait for it to complete.', 'warning');
+                        return;
+                    }
+
+                    // Store the URL being scanned
+                    lastScannedUrl = url;
+
+                    // Show loading state
+                    scanText.style.display = 'none';
+                    loading.style.display = 'flex';
+                    scanButton.disabled = true;
+                    urlInput.disabled = true;
+
+                    try {
+                        console.log('🚀 Starting scan for URL:', url);
+                        console.log('🌐 API Base URL:', window.API_BASE_URL);
+                        
+                        const apiUrl = window.API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:8000/api`;
+                        console.log('🔧 Using API URL:', apiUrl);
+                        
+                        const response = await fetch(`${apiUrl}/scan`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ 
+                                url: url,
+                                user_email: localStorage.getItem('userEmail') || null
+                            })
+                        });
+
+                        console.log('📥 Response received:');
+                        console.log('   Status:', response.status);
+                        console.log('   OK:', response.ok);
+
+                        if (!response.ok) {
+                            const errorData = await response.text();
+                            console.error('❌ Error response:', errorData);
+                            
+                            let errorMessage = 'Failed to start scan';
+                            try {
+                                const parsedError = JSON.parse(errorData);
+                                errorMessage = parsedError.detail || parsedError.message || errorMessage;
+                            } catch (e) {
+                                if (response.status === 404) {
+                                    errorMessage = 'API endpoint not found. Please check your backend configuration.';
+                                } else if (response.status >= 500) {
+                                    errorMessage = 'Server error. Please try again later.';
+                                }
+                            }
+                            
+                            throw new Error(errorMessage);
+                        }
+
+                        let data;
+                        try {
+                            data = await response.json();
+                            console.log('✅ Scan response data:', data);
+                        } catch (jsonError) {
+                            console.error('❌ JSON parsing error:', jsonError);
+                            const responseText = await response.text();
+                            console.error('❌ Raw response:', responseText);
+                            throw new Error('Invalid JSON response from server');
+                        }
+                        
+                        console.log('🔍 Checking for scan_id in response...');
+                        console.log('  data.scan_id:', data.scan_id);
+                        console.log('  data.hasOwnProperty("scan_id"):', data.hasOwnProperty('scan_id'));
+                        console.log('  typeof data.scan_id:', typeof data.scan_id);
+                        
+                        if (data.scan_id) {
+                            currentScanId = data.scan_id;
+                            console.log('🎯 Scan ID received:', currentScanId);
+                            console.log('📊 Initial status:', data.status);
+                            showNotification('Scan started successfully! Analyzing URL...', 'success');
+                            
+                            // Start polling for results
+                            console.log('🔄 Starting to poll for results...');
+                            pollScanResults();
+                        } else {
+                            console.error('❌ No scan ID in response');
+                            console.error('❌ Response data:', data);
+                            
+                            let errorMessage = 'Server error - no scan ID received. Please try again.';
+                            if (data.detail) {
+                                errorMessage = data.detail;
+                            } else if (data.message) {
+                                errorMessage = data.message;
+                            } else if (response.status === 500) {
+                                errorMessage = 'Server error. Please try again in a moment.';
+                            } else if (response.status === 400) {
+                                errorMessage = 'Invalid request. Please check the URL and try again.';
+                            }
+                            
+                            throw new Error(errorMessage);
+                        }
+                    } catch (error) {
+                        console.error('❌ Scan error:', error);
+                        let errorMessage = 'Network error. Please check your connection and try again.';
+                        
+                        if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                            errorMessage = 'Network connection failed. Please check your internet connection and try again.';
+                        } else if (error.message) {
+                            errorMessage = error.message;
+                        }
+                        
+                        showNotification(errorMessage, 'error');
+                    } finally {
+                        // Reset button state
+                        scanText.style.display = 'inline';
+                        loading.style.display = 'none';
+                        scanButton.disabled = false;
+                        urlInput.disabled = false;
+                    }
+                });
+            }
+
+            // Poll for scan results
+            function pollScanResults() {
+                if (!currentScanId) {
+                    console.error('❌ No scan ID available for polling');
+                    showNotification('Scan failed - no scan ID available. Please try again.', 'error');  
+                    return;
+                }
+                else{
+                    console.log('🔄 Starting to poll for scan results, ID:', currentScanId);
+                }
+
+                // Clear existing interval
+                if (scanPollingInterval) {
+                    clearInterval(scanPollingInterval);
+                }
+
+                let pollAttempts = 0;
+                const maxPollAttempts = 30; // 30 attempts * 2 seconds = 60 seconds max
+
+                scanPollingInterval = setInterval(async () => {
+                    pollAttempts++;
+                    console.log(`📡 Polling attempt ${pollAttempts}/${maxPollAttempts} for scan ID:`, currentScanId);
+                    
+                    try {
+                        const apiUrl = window.API_BASE_URL || `${window.location.protocol}//${window.location.hostname}:8000/api`;
+                        const response = await fetch(`${apiUrl}/scan/${currentScanId}`);
+                        
+                        console.log('📥 Poll response:');
+                        console.log('   Status:', response.status);
+                        console.log('   OK:', response.ok);
+                        
+                        if (!response.ok) {
+                            console.error('❌ Poll response not ok:', response.status, response.statusText);
+                            if (pollAttempts >= maxPollAttempts) {
+                                clearInterval(scanPollingInterval);
+                                showNotification('Scan timeout. Please try again.', 'error');
+                                resetScanState();
+                            }
+                            return;
+                        }
+
+                        const data = await response.json();
+                        console.log('📊 Poll response data:', data);
+
+                        if (data.status === 'completed') {
+                            console.log('✅ Scan completed!');
+                            console.log('🎯 Current Scan ID:', currentScanId);
+                            console.log('📊 Scan data:', data);
+                            clearInterval(scanPollingInterval);
+                            console.log('🔄 Redirecting to results page...');
+                            showNotification('Scan completed! Redirecting to results...', 'success');
+                            
+                            // Redirect to scan report page
+                            setTimeout(() => {
+                                const redirectUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/scan_report.html?scan_id=${currentScanId}`;
+                                console.log('🚀 Redirecting to:', redirectUrl);
+                                console.log('🔍 Current Scan ID at redirect:', currentScanId);
+                                window.location.href = redirectUrl;
+                            }, 1000);
+                        } else if (data.status === 'failed') {
+                            console.error('❌ Scan failed:', data);
+                            clearInterval(scanPollingInterval);
+                            showNotification('Scan failed. Please try again.', 'error');
+                            resetScanState();
+                        } else if (pollAttempts >= maxPollAttempts) {
+                            console.error('❌ Scan timeout after', maxPollAttempts, 'attempts');
+                            clearInterval(scanPollingInterval);
+                            showNotification('Scan timeout. Please try again.', 'error');
+                            resetScanState();
+                        }
+                    } catch (error) {
+                        console.error('❌ Poll error:', error);
+                        if (pollAttempts >= maxPollAttempts) {
+                            clearInterval(scanPollingInterval);
+                            showNotification('Network error during polling. Please try again.', 'error');
+                            resetScanState();
+                        }
+                    }
+                }, 2000);
+            }
+
+            // Function to reset scan state
+            function resetScanState() {
+                currentScanId = null;
+                lastScannedUrl = null;
+                if (scanPollingInterval) {
+                    clearInterval(scanPollingInterval);
+                    scanPollingInterval = null;
+                }
+                console.log('🔄 Scan state reset');
+            }
+
+        // Check login status and redirect to dashboard if logged in
+        function checkLoginAndRedirect(targetPage) {
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            
+            if (isLoggedIn) {
+                window.location.href = targetPage;
+            } else {
+                alert('Please log in to access the dashboard.');
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Load user's recent scans
+        async function loadUserRecentScans() {
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) return;
+            
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/user_scans?email=${encodeURIComponent(userEmail)}&limit=5`);
+                if (response.ok) {
+                    const scans = await response.json();
+                    displayRecentScans(scans);
+                }
+            } catch (error) {
+                console.error('Failed to load user scans:', error);
+            }
+        }
+
+        // Display recent scans
+        function displayRecentScans(scans) {
+            const container = document.getElementById('recent-scans-container');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            if (scans.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">🔍</div>
+                        <div class="empty-title">No scans yet</div>
+                        <div class="empty-desc">Start by scanning a URL to see your recent scans here.</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            scans.forEach(scan => {
+                const scanItem = createScanItem(scan);
+                container.appendChild(scanItem);
+            });
+        }
+
+        // Create scan item element
+        function createScanItem(scan) {
+            const scanItem = document.createElement('div');
+            scanItem.className = 'scan-item';
+            
+            const threatLevel = scan.threat_level || 'low';
+            const badgeClass = threatLevel === 'high' ? 'badge-danger' : 
+                             threatLevel === 'medium' ? 'badge-warning' : 'badge-safe';
+            const badgeText = threatLevel === 'high' ? 'Danger' : 
+                            threatLevel === 'medium' ? 'Warning' : 'Safe';
+            
+            const timeAgo = new Date(scan.created_at).toLocaleDateString();
+            
+            scanItem.innerHTML = `
+                <div class="scan-info">
+                    <div class="scan-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <circle cx="12" cy="10" r="3"/>
+                            <path d="M7 20.662V19a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v1.662"/>
+                        </svg>
+                    </div>
+                    <div class="scan-details">
+                        <h4>${scan.url}</h4>
+                        <div class="scan-meta">
+                            <span>${timeAgo}</span>
+                            <span>${scan.malicious_count || 0} threats</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="scan-actions">
+                    <span class="badge ${badgeClass}">${badgeText}</span>
+                    <button class="btn btn-ghost" onclick="viewScanDetails('${scan.scan_id}')" title="View Details">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                    </button>
+                    <button class="btn btn-download" onclick="downloadScanReport('${scan.scan_id}', '${scan.url}')" title="Download Report">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                            <polyline points="7,10 12,15 17,10"/>
+                            <line x1="12" y1="15" x2="12" y2="3"/>
+                        </svg>
+                        Download
+                    </button>
+                </div>
+            `;
+            
+            return scanItem;
+        }
+
+        // View scan details
+        function viewScanDetails(scanId) {
+            const redirectUrl = `${window.location.protocol}//${window.location.hostname}:${window.location.port}/scan_report.html?scan_id=${scanId}`;
+            window.location.href = redirectUrl;
+        }
+
+        // Download scan report
+        async function downloadScanReport(scanId, url) {
+            try {
+                // Show loading state
+                const downloadBtn = event.target.closest('button');
+                const originalText = downloadBtn.innerHTML;
+                downloadBtn.innerHTML = `
+                    <div class="spinner"></div>
+                    Generating...
+                `;
+                downloadBtn.disabled = true;
+
+                // Fetch scan report data
+                const response = await fetch(`${window.API_BASE_URL}/scan_report/${scanId}`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch scan report');
+                }
+
+                const reportData = await response.json();
+                
+                // Generate PDF report
+                const pdfBlob = await generatePDFReport(reportData, url);
+                
+                // Create download link
+                const downloadLink = document.createElement('a');
+                downloadLink.href = URL.createObjectURL(pdfBlob);
+                downloadLink.download = `webshield_scan_report_${url.replace(/[^a-zA-Z0-9]/g, '_')}_${new Date().toISOString().split('T')[0]}.pdf`;
+                
+                // Trigger download
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                
+                // Clean up
+                URL.revokeObjectURL(downloadLink.href);
+                
+            } catch (error) {
+                console.error('Download failed:', error);
+                alert('Failed to download report. Please try again.');
+            } finally {
+                // Reset button state
+                const downloadBtn = event.target.closest('button');
+                downloadBtn.innerHTML = originalText;
+                downloadBtn.disabled = false;
+            }
+        }
+
+        // Generate PDF report
+        async function generatePDFReport(reportData, url) {
+            // Use globally loaded jsPDF
+            const doc = new window.jsPDF();
+            
+            // Add header
+            doc.setFontSize(20);
+            doc.setTextColor(33, 150, 243);
+            doc.text('WebShield Security Scan Report', 20, 30);
+            
+            // Add scan details
+            doc.setFontSize(12);
+            doc.setTextColor(0, 0, 0);
+            doc.text(`URL Scanned: ${url}`, 20, 50);
+            doc.text(`Scan Date: ${new Date(reportData.created_at || Date.now()).toLocaleString()}`, 20, 60);
+            doc.text(`Threat Level: ${reportData.threat_level || 'Unknown'}`, 20, 70);
+            doc.text(`Total Threats Found: ${reportData.malicious_count || 0}`, 20, 80);
+            
+            // Add threat details if available
+            if (reportData.threats && reportData.threats.length > 0) {
+                doc.text('Threat Details:', 20, 100);
+                let yPos = 110;
+                reportData.threats.forEach((threat, index) => {
+                    if (yPos > 250) {
+                        doc.addPage();
+                        yPos = 20;
+                    }
+                    doc.text(`${index + 1}. ${threat.type || 'Unknown threat type'}`, 25, yPos);
+                    yPos += 10;
+                    if (threat.description) {
+                        doc.text(`   Description: ${threat.description}`, 30, yPos);
+                        yPos += 10;
+                    }
+                });
+            }
+            
+            // Add footer
+            doc.setFontSize(10);
+            doc.setTextColor(128, 128, 128);
+            doc.text('Generated by WebShield - Protecting the web, one URL at a time', 20, 280);
+            
+            return doc.output('blob');
+        }
+
+            // Initialize page
+            document.addEventListener('DOMContentLoaded', () => {
+                checkLoginStatus();
+                setupProfileDropdown();
+                setupScanForm();
+                checkPageAccess(); // Check for CORS issues
+                
+                // Load recent scans if user is logged in
+                const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+                if (isLoggedIn) {
+                    loadUserRecentScans();
+                    document.getElementById('recent-scans-section').style.display = 'block';
+                }
+            });
+            
+            // Detect if page is accessed directly and show CORS warning
+            function checkPageAccess() {
+                const isDirectAccess = window.location.protocol === 'file:';
+                const corsWarning = document.getElementById('cors-warning');
+                
+                if (isDirectAccess && corsWarning) {
+                    corsWarning.style.display = 'block';
+                    console.warn('⚠️ Page accessed directly via file:// protocol. This will cause CORS issues with scan ID generation.');
+                    console.warn('💡 Please access this page through the backend server at http://localhost:8000/');
+                }
+            }
+    </script>
+    <footer class="footer">
+        <div class="container">
+            <p> 2025 WebShield</p>
+            <p>All rights reserved. Protecting the web, one URL at a time.</p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Settings - WebShield</title>
+    <script src="config.js"></script>
+    <style>
+        :root {
+            /* Color System */
+            --primary: 220 95% 55%;
+            --primary-glow: 220 90% 65%;
+            --primary-variant: 230 85% 45%;
+            --secondary: 240 5% 15%;
+            --accent: 45 100% 55%;
+            --success: 142 76% 36%;
+            --destructive: 0 72% 51%;
+            --warning: 38 92% 50%;
+            
+            /* Background Colors */
+            --background: 224 71% 4%;
+            --surface: 224 71% 6%;
+            --card: 224 71% 8%;
+            --muted: 215 27% 17%;
+            --border: 215 27% 20%;
+            
+            /* Text Colors */
+            --foreground: 213 31% 91%;
+            --muted-foreground: 215 20% 65%;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--primary-glow)));
+            --gradient-cyber: linear-gradient(135deg, hsl(var(--primary)) 0%, hsl(var(--primary-variant)) 50%, hsl(var(--accent)) 100%);
+            --hero-gradient: linear-gradient(135deg, hsl(var(--background)) 0%, hsl(var(--surface)) 50%, hsl(var(--card)) 100%);
+            
+            /* Effects */
+            --glow: 0 0 30px hsl(var(--primary) / 0.3);
+            --glow-strong: 0 0 50px hsl(var(--primary) / 0.5);
+            --shadow-elegant: 0 10px 40px -10px hsl(var(--primary) / 0.2);
+            --border-glow: 0 0 20px hsl(var(--primary) / 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: hsl(var(--background));
+            color: hsl(var(--foreground));
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header */
+        .header {
+            background: hsl(var(--surface) / 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid hsl(var(--border));
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+
+        .header-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: hsl(var(--primary));
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, hsl(210 100% 60%), hsl(160 84% 45%));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, hsl(210 100% 60%), hsl(160 84% 45%));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .nav {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav a {
+            color: hsl(var(--muted-foreground));
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .nav a:hover {
+            color: hsl(var(--primary));
+        }
+
+        .nav a.active {
+            color: hsl(var(--primary));
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 0.75rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+            user-select: none;
+        }
+
+        .btn:focus-visible {
+            outline: 2px solid hsl(var(--ring));
+            outline-offset: 2px;
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        .btn-primary {
+            background: var(--gradient-primary);
+            color: white;
+            box-shadow: 0 4px 14px 0 hsl(var(--primary) / 0.25);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--primary) / 0.4);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: hsl(var(--foreground));
+            border: 2px solid hsl(var(--border));
+        }
+
+        .btn-outline:hover {
+            background: hsl(var(--muted) / 0.5);
+            border-color: hsl(var(--primary));
+            color: hsl(var(--primary));
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, hsl(var(--destructive)), hsl(0 72% 51%));
+            color: white;
+            box-shadow: 0 4px 14px 0 hsl(var(--destructive) / 0.25);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px 0 hsl(var(--destructive) / 0.4);
+        }
+
+        .btn-sm {
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+        }
+
+        /* Main Content */
+        .main {
+            padding: 2rem 0;
+        }
+
+        .page-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .page-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            background: var(--gradient-cyber);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .page-subtitle {
+            font-size: 1.125rem;
+            color: hsl(var(--muted-foreground));
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Settings Grid */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .settings-card {
+            background: hsl(var(--card));
+            border: 1px solid hsl(var(--border));
+            border-radius: 12px;
+            padding: 2rem;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--gradient-cyber);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: hsl(var(--foreground));
+        }
+
+        .card-subtitle {
+            font-size: 0.875rem;
+            color: hsl(var(--muted-foreground));
+            margin-top: 0.25rem;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 500;
+            color: hsl(var(--foreground));
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+            background: hsl(var(--surface));
+            color: hsl(var(--foreground));
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: hsl(var(--primary));
+            box-shadow: 0 0 0 2px hsl(var(--primary) / 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        /* API Key Section */
+        .api-key-section {
+            background: hsl(var(--surface));
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .api-key-display {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: hsl(var(--surface));
+            border: 1px solid hsl(var(--border));
+            border-radius: 8px;
+            padding: 0.75rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+        }
+
+        .api-key-text {
+            flex: 1;
+            color: hsl(var(--muted-foreground));
+        }
+
+        .api-key-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* Switch Toggle */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: hsl(var(--border));
+            transition: 0.3s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background: var(--gradient-cyber);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .switch-label {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        /* Webhook URL */
+        .webhook-url {
+            background: hsl(var(--surface));
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .webhook-url code {
+            background: hsl(var(--surface));
+            padding: 0.5rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            color: hsl(var(--foreground));
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .nav {
+                display: none;
+            }
+
+            .page-title {
+                font-size: 2rem;
+            }
+
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+.footer {
+    background: hsl(var(--surface) / 0.8);
+    padding: 0.5rem 0;
+    text-align: center;
+    font-size: 1rem;
+    color: hsl(var(--muted-foreground));
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                                    <a href="index.html" class="logo">
+                    <div class="logo-icon">🛡️</div>
+                    WebShield
+                </a>
+                
+                <nav class="nav" id="mobile-nav">
+                    <a href="index.html">Home</a>
+                    <a href="features.html">Features</a>
+                    <a href="dashboard.html">Dashboard</a>
+                    <a href="how-to-install.html">Extension</a>
+                    <a href="about.html">About</a>
+                </nav>
+                
+                <button class="mobile-menu-btn" id="mobile-menu-btn" style="display: none;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="3" y1="6" x2="21" y2="6"/>
+                        <line x1="3" y1="12" x2="21" y2="12"/>
+                        <line x1="3" y1="18" x2="21" y2="18"/>
+                    </svg>
+                </button>
+                
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn btn-outline" id="signin-btn">Sign In</a>
+                    <a href="register.html" class="btn btn-primary" id="getstarted-btn">Get Started</a>
+                    <div id="profile-section" style="display: none;">
+                        <span id="user-name">User</span>
+                        <a href="profile.html" class="btn btn-outline">Profile</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">API Settings</h1>
+                <p class="page-subtitle">Manage your API keys, webhooks, and integration settings</p>
+            </div>
+
+            <!-- Settings Grid -->
+            <div class="settings-grid">
+                <!-- API Keys -->
+                <div class="settings-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔑</div>
+                        <div>
+                            <div class="card-title">API Keys</div>
+                            <div class="card-subtitle">Manage your API access keys</div>
+                        </div>
+                    </div>
+
+                    <div class="api-key-section">
+                        <div class="form-label">Your API Key</div>
+                        <div class="api-key-display">
+                            <span class="api-key-text" id="api-key-display">ws_••••••••••••••••••••••••••••••••</span>
+                            <div class="api-key-actions">
+                                <button class="btn btn-outline btn-sm" onclick="copyApiKey()">Copy</button>
+                                <button class="btn btn-danger btn-sm" onclick="regenerateApiKey()">Regenerate</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">API Key Permissions</label>
+                        <div class="switch-label">
+                            <span>Read Access</span>
+                            <label class="switch">
+                                <input type="checkbox" checked disabled>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="switch-label">
+                            <span>Write Access</span>
+                            <label class="switch">
+                                <input type="checkbox" id="write-access">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="switch-label">
+                            <span>Admin Access</span>
+                            <label class="switch">
+                                <input type="checkbox" id="admin-access">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Webhooks -->
+                <div class="settings-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔗</div>
+                        <div>
+                            <div class="card-title">Webhooks</div>
+                            <div class="card-subtitle">Configure webhook endpoints</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Webhook URL</label>
+                        <input type="url" class="form-input" id="webhook-url" placeholder="https://your-domain.com/webhook">
+                    </div>
+
+                    <div class="webhook-url">
+                        <div class="form-label">Your Webhook Endpoint</div>
+                        <code id="webhook-endpoint">https://webshield.com/api/webhook/{your-api-key}</code>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Events to Send</label>
+                        <div class="switch-label">
+                            <span>Scan Completed</span>
+                            <label class="switch">
+                                <input type="checkbox" checked id="webhook-scan-completed">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="switch-label">
+                            <span>Threat Detected</span>
+                            <label class="switch">
+                                <input type="checkbox" checked id="webhook-threat-detected">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="switch-label">
+                            <span>API Usage Limit</span>
+                            <label class="switch">
+                                <input type="checkbox" id="webhook-usage-limit">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Rate Limits -->
+                <div class="settings-card">
+                    <div class="card-header">
+                        <div class="card-icon">⚡</div>
+                        <div>
+                            <div class="card-title">Rate Limits</div>
+                            <div class="card-subtitle">Configure API usage limits</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Requests per Minute</label>
+                        <select class="form-input form-select" id="rate-limit-minute">
+                            <option value="10">10 requests</option>
+                            <option value="50" selected>50 requests</option>
+                            <option value="100">100 requests</option>
+                            <option value="500">500 requests</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Requests per Hour</label>
+                        <select class="form-input form-select" id="rate-limit-hour">
+                            <option value="100">100 requests</option>
+                            <option value="500">500 requests</option>
+                            <option value="1000" selected>1,000 requests</option>
+                            <option value="5000">5,000 requests</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Requests per Day</label>
+                        <select class="form-input form-select" id="rate-limit-day">
+                            <option value="1000">1,000 requests</option>
+                            <option value="5000">5,000 requests</option>
+                            <option value="10000" selected>10,000 requests</option>
+                            <option value="50000">50,000 requests</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Notifications -->
+                <div class="settings-card">
+                    <div class="card-header">
+                        <div class="card-icon">🔔</div>
+                        <div>
+                            <div class="card-title">Notifications</div>
+                            <div class="card-subtitle">Configure notification preferences</div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Notifications</label>
+                        <div class="switch-label">
+                            <span>API Key Usage</span>
+                            <label class="switch">
+                                <input type="checkbox" checked id="email-api-usage">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="switch-label">
+                            <span>Rate Limit Warnings</span>
+                            <label class="switch">
+                                <input type="checkbox" checked id="email-rate-limit">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="switch-label">
+                            <span>Security Alerts</span>
+                            <label class="switch">
+                                <input type="checkbox" checked id="email-security">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Notification Email</label>
+                        <input type="email" class="form-input" id="notification-email" placeholder="your-email@example.com">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Save Button -->
+            <div style="text-align: center; margin-top: 2rem;">
+                <button class="btn btn-primary" onclick="saveSettings()">Save Settings</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Check login status and update header accordingly
+        function checkLoginStatus() {
+            const signInBtn = document.getElementById('signin-btn');
+            const getStartedBtn = document.getElementById('getstarted-btn');
+            const profileSection = document.getElementById('profile-section');
+            const userName = document.getElementById('user-name');
+            
+            // Check if user is logged in
+            const isLoggedIn = localStorage.getItem('userLoggedIn') === 'true';
+            const userEmail = localStorage.getItem('userEmail');
+            const userNameValue = localStorage.getItem('userName');
+            
+            console.log('Login status check:', { isLoggedIn, userEmail, userNameValue });
+            
+            if (isLoggedIn && profileSection) {
+                // User is logged in - show profile section, hide auth buttons
+                profileSection.style.display = 'block';
+                if (signInBtn) signInBtn.style.display = 'none';
+                if (getStartedBtn) getStartedBtn.style.display = 'none';
+                if (userName) userName.textContent = userNameValue || userEmail?.split('@')[0] || 'Profile';
+                console.log('Profile section shown');
+            } else {
+                // User is not logged in - show auth buttons, hide profile section
+                if (profileSection) profileSection.style.display = 'none';
+                if (signInBtn) signInBtn.style.display = 'inline-flex';
+                if (getStartedBtn) getStartedBtn.style.display = 'inline-flex';
+                console.log('Auth buttons shown');
+            }
+        }
+
+        // Copy API key to clipboard
+        function copyApiKey() {
+            const apiKey = document.getElementById('api-key-display').textContent;
+            navigator.clipboard.writeText(apiKey).then(() => {
+                alert('API key copied to clipboard!');
+            }).catch(() => {
+                alert('Failed to copy API key. Please copy manually.');
+            });
+        }
+
+        // Regenerate API key
+        async function regenerateApiKey() {
+            if (confirm('Are you sure you want to regenerate your API key? This will invalidate the current key.')) {
+                try {
+                    const response = await fetch(`${window.API_BASE_URL}/keys/generate`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: 'WebShield API Key',
+                            permissions: {
+                                scan: true,
+                                read: true
+                            },
+                            rate_limits: {
+                                minute: 50,
+                                hour: 1000,
+                                day: 10000
+                            }
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        document.getElementById('api-key-display').textContent = data.api_key;
+                        alert('API key regenerated successfully!');
+                    } else {
+                        alert('Failed to regenerate API key. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error regenerating API key:', error);
+                    alert('Error regenerating API key. Please try again.');
+                }
+            }
+        }
+
+        // Save settings
+        async function saveSettings() {
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) {
+                alert('Please sign in to save settings.');
+                return;
+            }
+
+            const settings = {
+                write_access: document.getElementById('write-access').checked,
+                admin_access: document.getElementById('admin-access').checked,
+                webhook_url: document.getElementById('webhook-url').value,
+                webhook_scan_completed: document.getElementById('webhook-scan-completed').checked,
+                webhook_threat_detected: document.getElementById('webhook-threat-detected').checked,
+                webhook_usage_limit: document.getElementById('webhook-usage-limit').checked,
+                rate_limit_minute: parseInt(document.getElementById('rate-limit-minute').value),
+                rate_limit_hour: parseInt(document.getElementById('rate-limit-hour').value),
+                rate_limit_day: parseInt(document.getElementById('rate-limit-day').value),
+                email_api_usage: document.getElementById('email-api-usage').checked,
+                email_rate_limit: document.getElementById('email-rate-limit').checked,
+                email_security: document.getElementById('email-security').checked,
+                notification_email: userEmail
+            };
+
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/settings/save`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(settings)
+                });
+
+                if (response.ok) {
+                    // Also save to localStorage for backup
+                    localStorage.setItem('apiSettings', JSON.stringify(settings));
+                    alert('Settings saved successfully!');
+                } else {
+                    alert('Failed to save settings. Please try again.');
+                }
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                alert('Error saving settings. Please try again.');
+            }
+        }
+
+        // Load settings
+        async function loadSettings() {
+            const userEmail = localStorage.getItem('userEmail');
+            if (!userEmail) {
+                // Load from localStorage as fallback
+                const savedSettings = localStorage.getItem('apiSettings');
+                if (savedSettings) {
+                    const settings = JSON.parse(savedSettings);
+                    populateSettings(settings);
+                }
+                return;
+            }
+
+            try {
+                const response = await fetch(`${window.API_BASE_URL}/settings/get?user_email=${encodeURIComponent(userEmail)}`);
+                if (response.ok) {
+                    const settings = await response.json();
+                    populateSettings(settings);
+                } else {
+                    // Fallback to localStorage
+                    const savedSettings = localStorage.getItem('apiSettings');
+                    if (savedSettings) {
+                        const settings = JSON.parse(savedSettings);
+                        populateSettings(settings);
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading settings:', error);
+                // Fallback to localStorage
+                const savedSettings = localStorage.getItem('apiSettings');
+                if (savedSettings) {
+                    const settings = JSON.parse(savedSettings);
+                    populateSettings(settings);
+                }
+            }
+        }
+
+        // Helper function to populate settings
+        function populateSettings(settings) {
+            document.getElementById('write-access').checked = settings.write_access || false;
+            document.getElementById('admin-access').checked = settings.admin_access || false;
+            document.getElementById('webhook-url').value = settings.webhook_url || '';
+            document.getElementById('webhook-scan-completed').checked = settings.webhook_scan_completed !== false;
+            document.getElementById('webhook-threat-detected').checked = settings.webhook_threat_detected !== false;
+            document.getElementById('webhook-usage-limit').checked = settings.webhook_usage_limit || false;
+            document.getElementById('rate-limit-minute').value = settings.rate_limit_minute || '50';
+            document.getElementById('rate-limit-hour').value = settings.rate_limit_hour || '1000';
+            document.getElementById('rate-limit-day').value = settings.rate_limit_day || '10000';
+            document.getElementById('email-api-usage').checked = settings.email_api_usage !== false;
+            document.getElementById('email-rate-limit').checked = settings.email_rate_limit !== false;
+            document.getElementById('email-security').checked = settings.email_security !== false;
+            document.getElementById('notification-email').value = settings.notification_email || '';
+        }
+
+        // Mobile menu functionality
+        function setupMobileMenu() {
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileNav = document.getElementById('mobile-nav');
+            
+            if (mobileMenuBtn && mobileNav) {
+                mobileMenuBtn.addEventListener('click', () => {
+                    mobileNav.classList.toggle('active');
+                });
+                
+                // Close mobile menu when clicking on a link
+                const navLinks = mobileNav.querySelectorAll('a');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', () => {
+                        mobileNav.classList.remove('active');
+                    });
+                });
+                
+                // Close mobile menu when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!mobileMenuBtn.contains(e.target) && !mobileNav.contains(e.target)) {
+                        mobileNav.classList.remove('active');
+                    }
+                });
+            }
+        }
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ensure API_BASE_URL is available
+            if (!window.API_BASE_URL) {
+                console.warn('⚠️ API_BASE_URL not found, using fallback');
+                window.API_BASE_URL = `${window.location.protocol}//${window.location.hostname}:8000/api`;
+                console.log('🔧 Fallback API_BASE_URL:', window.API_BASE_URL);
+            }
+            
+            checkLoginStatus();
+            setupMobileMenu();
+            loadSettings();
+        });
+    </script>
+    <footer class="footer">
+        <div class="container">
+            <p> 2025 WebShield</p>
+            <p>All rights reserved. Protecting the web, one URL at a time.</p>
+        </div>
+    </footer>
+</body>
+</html> 
