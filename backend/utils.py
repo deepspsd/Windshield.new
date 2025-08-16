@@ -45,7 +45,11 @@ class WebShieldDetector:
             # Import ML engine
             import sys
             import os
-            sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ml_models'))
+            # Get the project root directory (parent of backend)
+            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            ml_models_path = os.path.join(project_root, 'ml_models')
+            if ml_models_path not in sys.path:
+                sys.path.insert(0, ml_models_path)
             from ml_integration import MLSecurityEngine
             
             # Initialize ML engine
@@ -354,7 +358,11 @@ class WebShieldDetector:
             # Import ML engine
             import sys
             import os
-            sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ml_models'))
+            # Get the project root directory (parent of backend)
+            project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            ml_models_path = os.path.join(project_root, 'ml_models')
+            if ml_models_path not in sys.path:
+                sys.path.insert(0, ml_models_path)
             from ml_integration import MLSecurityEngine
             
             # Initialize ML engine
@@ -473,19 +481,6 @@ class WebShieldDetector:
                         'cached': False,
                         'fallback_checks': True
                     }
-        except Exception as e:
-            return {
-                'malicious_count': 0,
-                'suspicious_count': 0,
-                'harmless_count': 1,
-                'undetected_count': 0,
-                'total_engines': 1,
-                'engines_results': {'fallback': {'category': 'harmless', 'result': 'check_failed'}},
-                'reputation': 0,
-                'cached': False,
-                'fallback_checks': True,
-                'error': f'VirusTotal check failed: {str(e)}'
-            }
         except Exception as e:
             return {
                 'malicious_count': 0,
